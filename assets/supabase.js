@@ -31,6 +31,19 @@ export function fmtTime(timeStr) {
   return timeStr.slice(0, 5);
 }
 
+// Restituisce la galleria foto di un evento come array normalizzato [{ url, path }].
+// Gestisce sia il nuovo campo `photos` sia i vecchi eventi con solo `photo_url`.
+export function getPhotos(ev) {
+  if (!ev) return [];
+  if (Array.isArray(ev.photos) && ev.photos.length) {
+    return ev.photos.filter(function (p) { return p && p.url; });
+  }
+  if (ev.photo_url) {
+    return [{ url: ev.photo_url, path: ev.photo_path || null }];
+  }
+  return [];
+}
+
 export function todayISO() {
   const d = new Date();
   const pad = n => String(n).padStart(2, "0");

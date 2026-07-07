@@ -39,6 +39,9 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* L'attributo hidden deve sempre vincere sulle regole display delle componenti. */
+    [hidden] { display: none !important; }
+
     body {
       font-family: "Bricolage Grotesque", system-ui, sans-serif;
       background: var(--ink);
@@ -106,15 +109,60 @@
     textarea { resize: vertical; min-height: 5rem; }
     input[type="file"] { font-size: 0.85rem; color: var(--text-dim); }
 
-    #photo-preview {
-      display: block;
+    .photos-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 0.75rem;
       margin-top: 0.75rem;
-      max-width: 220px;
-      max-height: 220px;
-      object-fit: cover;
+    }
+    .photos-preview:empty { display: none; }
+    .photo-tile {
+      position: relative;
+      aspect-ratio: 3 / 2;
       border-radius: 10px;
       border: 1px solid var(--line);
+      overflow: hidden;
+      background: var(--ink);
     }
+    .photo-tile.is-cover { border-color: var(--accent); }
+    .photo-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-tile-cover {
+      position: absolute;
+      top: 0.4rem;
+      left: 0.4rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--ink);
+    }
+    .photo-tile-actions {
+      position: absolute;
+      top: 0.4rem;
+      right: 0.4rem;
+      display: flex;
+      gap: 0.3rem;
+    }
+    .photo-tile-actions button {
+      font: inherit;
+      font-size: 0.8rem;
+      line-height: 1;
+      width: 1.7rem;
+      height: 1.7rem;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      border-radius: 6px;
+      border: 1px solid oklch(100% 0 0 / 0.25);
+      background: oklch(15% 0.01 255 / 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: var(--text);
+    }
+    .photo-tile-actions button:hover { background: oklch(20% 0.01 255 / 0.9); }
 
     .btn {
       font: inherit;
@@ -235,10 +283,10 @@
           </div>
 
           <div class="field">
-            <label for="event-photo">Foto</label>
-            <input id="event-photo" name="photo" type="file" accept="image/*">
-            <img id="photo-preview" alt="" hidden>
-            <button class="btn btn-ghost btn-icon" type="button" id="remove-photo-btn" hidden style="margin-top:0.5rem; align-self:flex-start;">Rimuovi foto</button>
+            <span class="field-label">Foto</span>
+            <input id="event-photo" name="photo" type="file" accept="image/*" multiple>
+            <p class="muted" style="font-size:0.8rem;">Puoi aggiungere più foto. La prima è la copertina mostrata nell'elenco e in home; usa ★ per cambiarla.</p>
+            <div id="photos-preview" class="photos-preview"></div>
           </div>
 
           <div class="field">
@@ -267,7 +315,7 @@
 
   <script src="../assets/vendor/supabase.min.js"></script>
   <script type="module">
-    import { supabase, isConfigured, fmtDate, fmtTime } from '../assets/supabase.js';
+    import { supabase, isConfigured, fmtDate, fmtTime, getPhotos } from '../assets/supabase.js';
 
     var configWarning = document.getElementById('config-warning');
     var loginView = document.getElementById('login-view');
@@ -285,8 +333,7 @@
     var timeInput = document.getElementById('event-time');
     var locationInput = document.getElementById('event-location');
     var photoInput = document.getElementById('event-photo');
-    var photoPreview = document.getElementById('photo-preview');
-    var removePhotoBtn = document.getElementById('remove-photo-btn');
+    var photosPreview = document.getElementById('photos-preview');
     var linksRows = document.getElementById('links-rows');
     var addLinkBtn = document.getElementById('add-link-btn');
     var eventError = document.getElementById('event-error');
@@ -298,8 +345,8 @@
     var eventsList = document.getElementById('events-list');
 
     var editingEvent = null;
-    var selectedPhotoFile = null;
-    var removePhoto = false;
+    // Galleria in lavorazione: ogni voce è { kind:'existing', url, path } oppure { kind:'new', file, url:objectURL }.
+    var photoItems = [];
 
     function escapeHtml(str) {
       return String(str).replace(/[&<>"']/g, function (c) {
@@ -318,17 +365,72 @@
       linksRows.appendChild(row);
     }
 
+    function clearPhotoItems() {
+      photoItems.forEach(function (it) { if (it.kind === 'new') URL.revokeObjectURL(it.url); });
+      photoItems = [];
+    }
+
+    function renderPhotoPreviews() {
+      photosPreview.innerHTML = '';
+      photoItems.forEach(function (item, i) {
+        var tile = document.createElement('div');
+        tile.className = 'photo-tile' + (i === 0 ? ' is-cover' : '');
+
+        var img = document.createElement('img');
+        img.src = item.url;
+        img.alt = '';
+        tile.appendChild(img);
+
+        if (i === 0) {
+          var badge = document.createElement('span');
+          badge.className = 'photo-tile-cover';
+          badge.textContent = 'Copertina';
+          tile.appendChild(badge);
+        }
+
+        var actions = document.createElement('div');
+        actions.className = 'photo-tile-actions';
+
+        if (i > 0) {
+          var coverBtn = document.createElement('button');
+          coverBtn.type = 'button';
+          coverBtn.textContent = '★';
+          coverBtn.title = 'Rendi copertina';
+          coverBtn.setAttribute('aria-label', 'Rendi questa foto la copertina');
+          coverBtn.addEventListener('click', function () {
+            photoItems.splice(i, 1);
+            photoItems.unshift(item);
+            renderPhotoPreviews();
+          });
+          actions.appendChild(coverBtn);
+        }
+
+        var rmBtn = document.createElement('button');
+        rmBtn.type = 'button';
+        rmBtn.textContent = '✕';
+        rmBtn.title = 'Rimuovi foto';
+        rmBtn.setAttribute('aria-label', 'Rimuovi questa foto');
+        rmBtn.addEventListener('click', function () {
+          var removed = photoItems.splice(i, 1)[0];
+          if (removed && removed.kind === 'new') URL.revokeObjectURL(removed.url);
+          renderPhotoPreviews();
+        });
+        actions.appendChild(rmBtn);
+
+        tile.appendChild(actions);
+        photosPreview.appendChild(tile);
+      });
+    }
+
     function resetForm() {
       editingEvent = null;
       formTitle.textContent = 'Nuovo evento';
       eventForm.reset();
       linksRows.innerHTML = '';
       addLinkRow();
-      selectedPhotoFile = null;
-      removePhoto = false;
-      photoPreview.hidden = true;
-      photoPreview.removeAttribute('src');
-      removePhotoBtn.hidden = true;
+      clearPhotoItems();
+      renderPhotoPreviews();
+      photoInput.value = '';
       cancelEditBtn.hidden = true;
       eventError.hidden = true;
     }
@@ -350,18 +452,12 @@
         addLinkRow();
       }
 
-      selectedPhotoFile = null;
-      removePhoto = false;
+      clearPhotoItems();
       photoInput.value = '';
-      if (ev.photo_url) {
-        photoPreview.src = ev.photo_url;
-        photoPreview.hidden = false;
-        removePhotoBtn.hidden = false;
-      } else {
-        photoPreview.hidden = true;
-        photoPreview.removeAttribute('src');
-        removePhotoBtn.hidden = true;
-      }
+      getPhotos(ev).forEach(function (p) {
+        photoItems.push({ kind: 'existing', url: p.url, path: p.path || null });
+      });
+      renderPhotoPreviews();
 
       cancelEditBtn.hidden = false;
       eventError.hidden = true;
@@ -411,7 +507,10 @@
     async function handleDelete(ev) {
       if (!confirm('Eliminare l\'evento "' + ev.title + '"? L\'operazione non è reversibile.')) return;
       try {
-        if (ev.photo_path) await deletePhoto(ev.photo_path);
+        var photos = getPhotos(ev);
+        for (var i = 0; i < photos.length; i++) {
+          if (photos[i].path) await deletePhoto(photos[i].path);
+        }
         var res = await supabase.from('events').delete().eq('id', ev.id);
         if (res.error) throw res.error;
         if (editingEvent && editingEvent.id === ev.id) resetForm();
@@ -453,8 +552,14 @@
       }
     }
 
+    // Traccia lo stato mostrato: onAuthStateChange scatta anche su TOKEN_REFRESHED e
+    // su SIGNED_IN quando la scheda ri-ottiene il focus. Senza questa guardia ogni
+    // evento richiamerebbe resetForm(), azzerando il form mentre lo si compila.
+    var appShown = false;
     async function updateView(session) {
       var loggedIn = !!session;
+      if (loggedIn === appShown) return; // nessuna transizione reale: non toccare il form
+      appShown = loggedIn;
       loginView.hidden = loggedIn;
       appView.hidden = !loggedIn;
       logoutBtn.hidden = !loggedIn;
@@ -467,26 +572,11 @@
     addLinkBtn.addEventListener('click', function () { addLinkRow(); });
 
     photoInput.addEventListener('change', function () {
-      var file = photoInput.files[0];
-      if (!file) return;
-      selectedPhotoFile = file;
-      removePhoto = false;
-      var reader = new FileReader();
-      reader.onload = function () {
-        photoPreview.src = reader.result;
-        photoPreview.hidden = false;
-        removePhotoBtn.hidden = false;
-      };
-      reader.readAsDataURL(file);
-    });
-
-    removePhotoBtn.addEventListener('click', function () {
-      selectedPhotoFile = null;
-      removePhoto = true;
+      Array.prototype.forEach.call(photoInput.files, function (file) {
+        photoItems.push({ kind: 'new', file: file, url: URL.createObjectURL(file) });
+      });
       photoInput.value = '';
-      photoPreview.hidden = true;
-      photoPreview.removeAttribute('src');
-      removePhotoBtn.hidden = true;
+      renderPhotoPreviews();
     });
 
     cancelEditBtn.addEventListener('click', resetForm);
@@ -513,20 +603,29 @@
           };
         }).filter(function (l) { return l.url; });
 
-        var photoUrl = editingEvent ? editingEvent.photo_url : null;
-        var photoPath = editingEvent ? editingEvent.photo_path : null;
+        // Risolvi la galleria: carica le foto nuove, mantieni le esistenti nell'ordine scelto.
+        var finalPhotos = [];
+        var keptPaths = [];
+        for (var i = 0; i < photoItems.length; i++) {
+          var item = photoItems[i];
+          if (item.kind === 'existing') {
+            finalPhotos.push({ url: item.url, path: item.path });
+            if (item.path) keptPaths.push(item.path);
+          } else {
+            eventStatus.textContent = 'Caricamento foto ' + (i + 1) + ' di ' + photoItems.length + '…';
+            eventStatus.hidden = false;
+            var blob = await resizeImage(item.file, 1600);
+            var uploaded = await uploadPhoto(blob);
+            finalPhotos.push({ url: uploaded.photo_url, path: uploaded.photo_path });
+          }
+        }
 
-        if (selectedPhotoFile) {
-          var blob = await resizeImage(selectedPhotoFile, 1600);
-          var oldPath = photoPath;
-          var uploaded = await uploadPhoto(blob);
-          photoUrl = uploaded.photo_url;
-          photoPath = uploaded.photo_path;
-          if (oldPath) await deletePhoto(oldPath);
-        } else if (removePhoto) {
-          if (photoPath) await deletePhoto(photoPath);
-          photoUrl = null;
-          photoPath = null;
+        // Elimina dallo storage le foto esistenti che sono state rimosse dalla galleria.
+        var oldPhotos = editingEvent ? getPhotos(editingEvent) : [];
+        for (var j = 0; j < oldPhotos.length; j++) {
+          if (oldPhotos[j].path && keptPaths.indexOf(oldPhotos[j].path) < 0) {
+            await deletePhoto(oldPhotos[j].path);
+          }
         }
 
         var payload = {
@@ -536,8 +635,9 @@
           start_time: startTime,
           location: location,
           links: links,
-          photo_url: photoUrl,
-          photo_path: photoPath
+          photos: finalPhotos,
+          photo_url: finalPhotos.length ? finalPhotos[0].url : null,
+          photo_path: finalPhotos.length ? finalPhotos[0].path : null
         };
 
         var result = editingEvent

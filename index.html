@@ -78,6 +78,9 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* L'attributo hidden deve sempre vincere sulle regole display: grid/flex delle componenti. */
+    [hidden] { display: none !important; }
+
     html { scroll-behavior: smooth; }
 
     body {
@@ -631,6 +634,175 @@
     }
     .event-card--compact .event-body h4 { font-size: 1rem; }
 
+    /* Card cliccabili + dettaglio */
+    .event-card { cursor: pointer; }
+    .event-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .event-desc {
+      display: -webkit-box;
+      line-clamp: 3;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .event-more {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 0.2rem;
+    }
+    .event-photo-count {
+      position: absolute;
+      top: 0.85rem;
+      right: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.55rem;
+      border-radius: 999px;
+      background: oklch(15% 0.01 255 / 0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid oklch(100% 0 0 / 0.25);
+    }
+    .event-photo-count svg { width: 0.9rem; height: 0.9rem; }
+
+    /* Modale di dettaglio evento */
+    body.modal-open { overflow: hidden; }
+    .event-modal[hidden] { display: none; }
+    .event-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: clamp(1rem, 4vw, 2.5rem);
+    }
+    .event-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: oklch(8% 0.01 255 / 0.8);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .event-modal-dialog {
+      position: relative;
+      z-index: 1;
+      width: min(760px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: var(--ink-2);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+    .event-modal-close {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      z-index: 2;
+      width: 2.2rem;
+      height: 2.2rem;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 999px;
+      border: 1px solid oklch(100% 0 0 / 0.25);
+      background: oklch(15% 0.01 255 / 0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: var(--text);
+    }
+    .event-modal-close:hover { background: oklch(20% 0.01 255 / 0.9); }
+    .event-modal-gallery {
+      position: relative;
+      background: oklch(10% 0.01 255);
+      border-radius: 16px 16px 0 0;
+      overflow: hidden;
+    }
+    .event-modal-img {
+      display: block;
+      width: 100%;
+      max-height: 60vh;
+      object-fit: contain;
+    }
+    .gallery-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2.6rem;
+      height: 2.6rem;
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 999px;
+      border: 1px solid oklch(100% 0 0 / 0.25);
+      background: oklch(15% 0.01 255 / 0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: var(--text);
+    }
+    .gallery-nav:hover { background: oklch(20% 0.01 255 / 0.9); }
+    .gallery-prev { left: 0.75rem; }
+    .gallery-next { right: 0.75rem; }
+    .gallery-counter {
+      position: absolute;
+      bottom: 0.75rem;
+      right: 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: oklch(15% 0.01 255 / 0.72);
+      color: var(--text);
+    }
+    .event-modal-thumbs {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--line);
+    }
+    .event-modal-thumb {
+      flex: 0 0 auto;
+      width: 64px;
+      height: 44px;
+      padding: 0;
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      background: var(--ink);
+    }
+    .event-modal-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .event-modal-thumb.is-active { border-color: var(--accent); }
+    .event-modal-body {
+      padding: clamp(1.25rem, 3vw, 2rem);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .event-modal-body h3 {
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .event-modal-meta { font-size: 0.9rem; color: var(--text-dim); }
+    .event-modal-desc { white-space: pre-wrap; max-width: 68ch; }
+    .event-modal-links {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+      margin-top: 0.25rem;
+    }
+    .event-modal-links a { font-size: 0.9rem; font-weight: 600; }
+
     /* ---------- Mobile ---------- */
 
     @media (max-width: 680px) {
@@ -700,40 +872,37 @@
   <main>
     <section class="hero" id="carosello" aria-roledescription="carosello" aria-label="Fotografie dagli eventi della Pro Loco">
       <ul class="slides">
-        <li class="slide is-active" role="group" aria-roledescription="diapositiva" aria-label="1 di 12">
+        <li class="slide is-active" role="group" aria-roledescription="diapositiva" aria-label="1 di 11">
           <img src="assets/pozfest-01-tavoli.jpg" alt="I tavoli della festa al tramonto tra i gazebo della Pro Loco e i filari di luci, con le montagne sullo sfondo" fetchpriority="high" decoding="async">
         </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="2 di 12" aria-hidden="true">
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="2 di 11" aria-hidden="true">
           <img src="assets/pozfest-08-costine.jpg" alt="Costine alla griglia con patatine su un vassoio giallo" loading="lazy" decoding="async">
         </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="3 di 12" aria-hidden="true">
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="3 di 11" aria-hidden="true">
           <img src="assets/pozfest-03-dj.jpg" alt="Il dj alla console del POZFEST tra i fasci di luce blu, davanti al pubblico che balla" loading="lazy" decoding="async">
         </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="4 di 12" aria-hidden="true">
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="4 di 11" aria-hidden="true">
           <img src="assets/pozfest-04-burger.jpg" alt="Panino con pulled pork e patatine appena serviti dalla cucina del festival" loading="lazy" decoding="async">
         </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="5 di 12" aria-hidden="true">
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="5 di 11" aria-hidden="true">
           <img src="assets/pozfest-11-parco.jpg" alt="Il Parco al Poz di sera: tendoni illuminati, filari di luci e il pubblico ai tavoli" loading="lazy" decoding="async">
         </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="6 di 12" aria-hidden="true">
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="6 di 11" aria-hidden="true">
           <img src="assets/pozfest-06-panino.jpg" alt="Primo piano di un panino al pulled pork con insalata su un vassoio giallo" loading="lazy" decoding="async">
         </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="7 di 12" aria-hidden="true">
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="7 di 11" aria-hidden="true">
           <img src="assets/pozfest-12-palco.jpg" alt="Il pubblico davanti al palco sotto il tendone, in bianco e nero, nel controluce dei riflettori" loading="lazy" decoding="async">
         </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="8 di 12" aria-hidden="true">
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="8 di 11" aria-hidden="true">
           <img src="assets/pozfest-02-griglia.jpg" alt="In cucina al POZFEST: un volontario alla griglia piena di hamburger" loading="lazy" decoding="async">
         </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="9 di 12" aria-hidden="true">
-          <img src="assets/pozfest-09-ballo.jpg" alt="Il pubblico del POZ FEST balla sotto la tensostruttura" loading="lazy" decoding="async">
-        </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="10 di 12" aria-hidden="true">
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="9 di 11" aria-hidden="true">
           <img src="assets/pozfest-10-volontari.jpg" alt="Un giovane volontario porta ai tavoli tre vassoi con panini e patatine" loading="lazy" decoding="async">
         </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="11 di 12" aria-hidden="true">
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="10 di 11" aria-hidden="true">
           <img src="assets/pozfest-05-tendoni.jpg" alt="La festa serale tra i tendoni e i filari di luci del Parco al Poz" loading="lazy" decoding="async">
         </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="12 di 12" aria-hidden="true">
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="11 di 11" aria-hidden="true">
           <img src="assets/pozfest-07-pozparty.jpg" alt="Il pubblico del POZ Party sotto il tendone illuminato di verde" loading="lazy" decoding="async">
         </li>
       </ul>
@@ -761,7 +930,6 @@
             <button class="seg" type="button" aria-label="Fotografia 9"></button>
             <button class="seg" type="button" aria-label="Fotografia 10"></button>
             <button class="seg" type="button" aria-label="Fotografia 11"></button>
-            <button class="seg" type="button" aria-label="Fotografia 12"></button>
           </div>
           <div class="ctrl-buttons">
             <button class="ctrl" type="button" data-action="prev" aria-label="Fotografia precedente">
@@ -956,15 +1124,42 @@
     })();
   </script>
 
+  <div class="event-modal" id="event-modal" hidden>
+    <div class="event-modal-backdrop" data-close></div>
+    <div class="event-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="event-modal-close" type="button" aria-label="Chiudi" data-close>✕</button>
+      <div class="event-modal-gallery">
+        <img class="event-modal-img" alt="">
+        <button class="gallery-nav gallery-prev" type="button" aria-label="Foto precedente" hidden>‹</button>
+        <button class="gallery-nav gallery-next" type="button" aria-label="Foto successiva" hidden>›</button>
+        <span class="gallery-counter" aria-hidden="true" hidden></span>
+      </div>
+      <div class="event-modal-thumbs" hidden></div>
+      <div class="event-modal-body">
+        <h3 id="modal-title"></h3>
+        <p class="event-modal-meta"></p>
+        <p class="event-modal-desc"></p>
+        <ul class="event-modal-links" hidden></ul>
+      </div>
+    </div>
+  </div>
+
   <script src="assets/vendor/supabase.min.js"></script>
   <script type="module">
-    import { supabase, isConfigured, fmtDateShort, fmtTime, todayISO } from './assets/supabase.js';
+    import { supabase, isConfigured, fmtDate, fmtDateShort, fmtTime, todayISO, getPhotos } from './assets/supabase.js';
 
     var status = document.querySelector('.events-status');
     var upcomingList = document.querySelector('[data-group="prossimi"] .events-grid');
     var upcomingEmpty = document.querySelector('[data-group="prossimi"] .events-empty');
     var archiveGroup = document.querySelector('[data-group="passati"]');
     var archiveList = archiveGroup.querySelector('.events-grid');
+    var eventsSection = document.querySelector('.events');
+
+    var eventsById = {};
+
+    var MULTI_ICON = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+      '<rect x="3" y="3" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2"/>' +
+      '<path d="M8 21h11a2 2 0 0 0 2-2V8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 
     function escapeHtml(str) {
       return String(str).replace(/[&<>"']/g, function (c) {
@@ -975,24 +1170,156 @@
     function renderCard(ev, compact) {
       var badge = fmtDateShort(ev.event_date);
       var meta = [fmtTime(ev.start_time), ev.location].filter(Boolean).join(' · ');
-      var links = Array.isArray(ev.links) ? ev.links : [];
+      var photos = getPhotos(ev);
+      var cover = photos.length ? photos[0].url : null;
 
-      var photoHtml = ev.photo_url
-        ? '<div class="event-photo"><img src="' + escapeHtml(ev.photo_url) + '" alt="" loading="lazy" decoding="async">'
+      var photoHtml = cover
+        ? '<div class="event-photo"><img src="' + escapeHtml(cover) + '" alt="" loading="lazy" decoding="async">'
         : '<div class="event-photo is-placeholder"><img src="assets/logo.svg" alt="" loading="lazy">';
-      photoHtml += '<span class="event-date-badge"><strong>' + badge.day + '</strong><span>' + badge.month + '</span></span></div>';
+      photoHtml += '<span class="event-date-badge"><strong>' + badge.day + '</strong><span>' + badge.month + '</span></span>';
+      if (!compact && photos.length > 1) {
+        photoHtml += '<span class="event-photo-count" aria-hidden="true">' + MULTI_ICON + photos.length + '</span>';
+      }
+      photoHtml += '</div>';
 
       var metaHtml = meta ? '<p class="event-meta">' + escapeHtml(meta) + '</p>' : '';
       var descHtml = (!compact && ev.description) ? '<p class="event-desc">' + escapeHtml(ev.description) + '</p>' : '';
-      var linksHtml = (!compact && links.length)
-        ? '<ul class="event-links">' + links.map(function (l) {
-            return '<li><a href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener">' + escapeHtml(l.label || l.url) + '</a></li>';
-          }).join('') + '</ul>'
-        : '';
+      var moreHtml = compact ? '' : '<span class="event-more" aria-hidden="true">Dettagli →</span>';
 
-      return '<li class="event-card' + (compact ? ' event-card--compact' : '') + '">' + photoHtml +
-        '<div class="event-body"><h4>' + escapeHtml(ev.title) + '</h4>' + metaHtml + descHtml + linksHtml + '</div></li>';
+      return '<li class="event-card' + (compact ? ' event-card--compact' : '') + '"' +
+        ' data-id="' + escapeHtml(ev.id) + '" role="button" tabindex="0"' +
+        ' aria-label="Apri i dettagli dell\'evento: ' + escapeHtml(ev.title) + '">' + photoHtml +
+        '<div class="event-body"><h4>' + escapeHtml(ev.title) + '</h4>' + metaHtml + descHtml + moreHtml + '</div></li>';
     }
+
+    /* ---------- Modale di dettaglio ---------- */
+
+    var modal = document.getElementById('event-modal');
+    var modalDialog = modal.querySelector('.event-modal-dialog');
+    var modalClose = modal.querySelector('.event-modal-close');
+    var modalGallery = modal.querySelector('.event-modal-gallery');
+    var modalImg = modal.querySelector('.event-modal-img');
+    var galleryPrev = modal.querySelector('.gallery-prev');
+    var galleryNext = modal.querySelector('.gallery-next');
+    var galleryCounter = modal.querySelector('.gallery-counter');
+    var modalThumbs = modal.querySelector('.event-modal-thumbs');
+    var modalTitle = modal.querySelector('#modal-title');
+    var modalMeta = modal.querySelector('.event-modal-meta');
+    var modalDesc = modal.querySelector('.event-modal-desc');
+    var modalLinks = modal.querySelector('.event-modal-links');
+
+    var galleryPhotos = [];
+    var galleryIndex = 0;
+    var lastFocused = null;
+
+    function showPhoto(i) {
+      var n = galleryPhotos.length;
+      if (!n) return;
+      galleryIndex = (i + n) % n;
+      modalImg.src = galleryPhotos[galleryIndex].url;
+      var multi = n > 1;
+      galleryPrev.hidden = galleryNext.hidden = !multi;
+      galleryCounter.hidden = !multi;
+      galleryCounter.textContent = (galleryIndex + 1) + ' / ' + n;
+      Array.prototype.forEach.call(modalThumbs.children, function (t, idx) {
+        t.classList.toggle('is-active', idx === galleryIndex);
+      });
+    }
+
+    function renderThumbs() {
+      if (galleryPhotos.length > 1) {
+        modalThumbs.innerHTML = galleryPhotos.map(function (p, idx) {
+          return '<button type="button" class="event-modal-thumb" data-idx="' + idx +
+            '" aria-label="Mostra foto ' + (idx + 1) + '"><img src="' + escapeHtml(p.url) + '" alt=""></button>';
+        }).join('');
+        modalThumbs.hidden = false;
+      } else {
+        modalThumbs.innerHTML = '';
+        modalThumbs.hidden = true;
+      }
+    }
+
+    function openModal(ev) {
+      galleryPhotos = getPhotos(ev);
+      galleryIndex = 0;
+
+      modalTitle.textContent = ev.title || '';
+      modalMeta.textContent = [fmtDate(ev.event_date), fmtTime(ev.start_time), ev.location].filter(Boolean).join(' · ');
+
+      modalDesc.textContent = ev.description || '';
+      modalDesc.hidden = !ev.description;
+
+      var links = Array.isArray(ev.links) ? ev.links : [];
+      if (links.length) {
+        modalLinks.innerHTML = links.map(function (l) {
+          return '<li><a href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener">' +
+            escapeHtml(l.label || l.url) + '</a></li>';
+        }).join('');
+        modalLinks.hidden = false;
+      } else {
+        modalLinks.innerHTML = '';
+        modalLinks.hidden = true;
+      }
+
+      modalGallery.hidden = galleryPhotos.length === 0;
+      renderThumbs();
+      if (galleryPhotos.length) showPhoto(0); else modalImg.removeAttribute('src');
+
+      lastFocused = document.activeElement;
+      modal.hidden = false;
+      document.body.classList.add('modal-open');
+      modalDialog.scrollTop = 0;
+      modalClose.focus();
+      document.addEventListener('keydown', onModalKeydown);
+    }
+
+    function closeModal() {
+      modal.hidden = true;
+      document.body.classList.remove('modal-open');
+      document.removeEventListener('keydown', onModalKeydown);
+      modalImg.removeAttribute('src');
+      if (lastFocused && lastFocused.focus) lastFocused.focus();
+    }
+
+    function onModalKeydown(e) {
+      if (e.key === 'Escape') { closeModal(); return; }
+      if (e.key === 'ArrowLeft' && galleryPhotos.length > 1) { showPhoto(galleryIndex - 1); return; }
+      if (e.key === 'ArrowRight' && galleryPhotos.length > 1) { showPhoto(galleryIndex + 1); return; }
+      if (e.key === 'Tab') {
+        var focusables = Array.prototype.filter.call(
+          modalDialog.querySelectorAll('button, a[href], [tabindex]:not([tabindex="-1"])'),
+          function (el) { return !el.hidden && el.offsetParent !== null; }
+        );
+        if (!focusables.length) return;
+        var first = focusables[0], last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+
+    modalClose.addEventListener('click', closeModal);
+    galleryPrev.addEventListener('click', function () { showPhoto(galleryIndex - 1); });
+    galleryNext.addEventListener('click', function () { showPhoto(galleryIndex + 1); });
+    modal.addEventListener('click', function (e) { if (e.target.hasAttribute('data-close')) closeModal(); });
+    modalThumbs.addEventListener('click', function (e) {
+      var t = e.target.closest('.event-modal-thumb');
+      if (t) showPhoto(parseInt(t.dataset.idx, 10));
+    });
+
+    function cardActivate(e) {
+      var card = e.target.closest('.event-card');
+      if (!card || !card.dataset.id) return;
+      if (e.type === 'keydown') {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+      }
+      var ev = eventsById[card.dataset.id];
+      if (ev) openModal(ev);
+    }
+    eventsSection.addEventListener('click', cardActivate);
+    eventsSection.addEventListener('keydown', cardActivate);
+
+    /* ---------- Caricamento ---------- */
 
     async function loadEvents() {
       if (!isConfigured) {
@@ -1004,6 +1331,9 @@
         var res = await supabase.from('events').select('*').order('event_date', { ascending: true });
         if (res.error) { throw res.error; }
         var data = res.data || [];
+
+        eventsById = {};
+        data.forEach(function (e) { eventsById[e.id] = e; });
 
         var today = todayISO();
         var upcoming = data.filter(function (e) { return e.event_date >= today; });

@@ -12,7 +12,7 @@ Abitanti di Preore e Tre Ville, giudicariesi delle valli vicine, turisti e famig
 
 Sito ufficiale dell'Associazione Pro Loco di Preore APS (prolocopreore.it, GitHub Pages, HTML statico). È il biglietto da visita pubblico dell'associazione: mostra la vita degli eventi attraverso la fotografia, elenca gli eventi in programma e passati, e tiene i dati istituzionali sempre raggiungibili. Successo = un visitatore capisce in cinque secondi che questa è una comunità viva, trova gli eventi e i contatti senza cercare.
 
-Gli eventi sono gestiti dai volontari dell'associazione tramite `/management`, una pagina non linkata dalla home e protetta da login (email + password, Supabase Auth). I dati (eventi + foto) vivono su Supabase, l'unica dipendenza esterna del sito: piano gratuito, nessun costo oltre al dominio.
+Gli eventi sono gestiti dai volontari dell'associazione tramite `/management`, una pagina non linkata dalla home e protetta da login (email + password, Supabase Auth). Ogni evento può avere più foto (galleria) e una descrizione lunga: in home la card mostra copertina, data e anteprima, e il clic apre un dettaglio con la galleria completa e il testo integrale. I dati (eventi + foto) vivono su Supabase, l'unica dipendenza esterna del sito: piano gratuito, nessun costo oltre al dominio.
 
 ## Brand Personality
 
