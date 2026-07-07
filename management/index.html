@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+  <title>Gestione eventi — Pro Loco di Preore APS</title>
+  <style>
+    @font-face {
+      font-family: "Bricolage Grotesque";
+      font-style: normal;
+      font-weight: 400 800;
+      font-stretch: 100%;
+      font-display: swap;
+      src: url("../assets/fonts/bricolage-grotesque-latin.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: "Bricolage Grotesque";
+      font-style: normal;
+      font-weight: 400 800;
+      font-stretch: 100%;
+      font-display: swap;
+      src: url("../assets/fonts/bricolage-grotesque-latin-ext.woff2") format("woff2");
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+
+    :root {
+      --ink: oklch(16% 0.012 255);
+      --ink-2: oklch(21% 0.014 255);
+      --line: oklch(32% 0.015 255);
+      --text: oklch(96% 0.004 250);
+      --text-dim: oklch(76% 0.012 252);
+      --accent: oklch(75% 0.115 235);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --pad: clamp(1.25rem, 4vw, 3rem);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Bricolage Grotesque", system-ui, sans-serif;
+      background: var(--ink);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    ::selection { background: var(--accent); color: var(--ink); }
+
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: clamp(1rem, 2.5vw, 1.75rem) var(--pad);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.9rem; color: var(--text); }
+    .brand:hover { text-decoration: none; }
+    .brand img { width: clamp(40px, 5vw, 52px); height: auto; filter: brightness(0) invert(1); }
+    .brand span { font-size: 0.95rem; font-weight: 600; letter-spacing: 0.01em; }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: clamp(2rem, 5vw, 3.5rem) var(--pad) clamp(3rem, 7vw, 5rem);
+    }
+
+    h1 { font-size: clamp(1.75rem, 4vw, 2.25rem); font-weight: 800; letter-spacing: -0.02em; }
+
+    .panel {
+      background: var(--ink-2);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: clamp(1.5rem, 3vw, 2.25rem);
+      margin-top: 2rem;
+    }
+    .panel h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem; }
+
+    .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.1rem; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .field label, .field-label { font-size: 0.85rem; font-weight: 600; color: var(--text-dim); }
+
+    input[type="text"], input[type="email"], input[type="password"],
+    input[type="date"], input[type="time"], input[type="url"], textarea {
+      font: inherit;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      width: 100%;
+    }
+    textarea { resize: vertical; min-height: 5rem; }
+    input[type="file"] { font-size: 0.85rem; color: var(--text-dim); }
+
+    #photo-preview {
+      display: block;
+      margin-top: 0.75rem;
+      max-width: 220px;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+    }
+
+    .btn {
+      font: inherit;
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      border: 1px solid oklch(100% 0 0 / 0.35);
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.2s var(--ease), border-color 0.2s var(--ease);
+    }
+    .btn:hover { background: var(--ink); border-color: oklch(100% 0 0 / 0.6); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--ink); }
+    .btn-primary:hover { background: oklch(75% 0.115 235 / 0.85); border-color: oklch(75% 0.115 235 / 0.85); }
+    .btn-ghost { border-color: var(--line); }
+    .btn-danger { border-color: oklch(58% 0.19 25); color: oklch(78% 0.13 25); }
+    .btn-danger:hover { background: oklch(30% 0.09 25 / 0.35); }
+    .btn-icon { padding: 0.4rem 0.65rem; border-radius: 8px; line-height: 1; }
+
+    .form-actions { display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap; }
+
+    .form-error { color: oklch(78% 0.13 25); font-size: 0.9rem; margin-bottom: 1rem; }
+    .form-status { color: var(--accent); font-size: 0.9rem; margin-bottom: 1rem; }
+    .muted { color: var(--text-dim); font-size: 0.9rem; }
+
+    .link-row { display: grid; grid-template-columns: 1fr 1.4fr auto; gap: 0.5rem; margin-bottom: 0.5rem; }
+
+    .admin-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .admin-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--ink);
+    }
+    .admin-list-info { display: flex; flex-direction: column; gap: 0.2rem; }
+    .admin-list-actions { display: flex; gap: 0.5rem; }
+
+    @media (max-width: 640px) {
+      .field-row { grid-template-columns: 1fr; }
+      .link-row { grid-template-columns: 1fr; }
+      .admin-list-item { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="brand" href="../" aria-label="Pro Loco di Preore — pagina iniziale">
+      <img src="../assets/logo.svg" alt="">
+      <span>Pro Loco Preore</span>
+    </a>
+    <button class="btn btn-ghost" id="logout-btn" type="button" hidden>Esci</button>
+  </header>
+
+  <main>
+    <h1>Gestione eventi</h1>
+
+    <p class="form-error" id="config-warning" hidden>
+      Il collegamento a Supabase non è ancora configurato: imposta SUPABASE_URL e SUPABASE_ANON_KEY in <code>assets/supabase.js</code>.
+    </p>
+
+    <noscript>
+      <p class="form-error">Questa pagina richiede JavaScript per funzionare.</p>
+    </noscript>
+
+    <section id="login-view" class="panel">
+      <h2>Accedi</h2>
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="login-email">Email</label>
+          <input id="login-email" name="email" type="email" required autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="login-password">Password</label>
+          <input id="login-password" name="password" type="password" required autocomplete="current-password">
+        </div>
+        <p class="form-error" id="login-error" role="alert" hidden></p>
+        <button class="btn btn-primary" type="submit">Accedi</button>
+      </form>
+    </section>
+
+    <section id="app-view" hidden>
+      <div class="panel" id="event-form-panel">
+        <h2 id="form-title">Nuovo evento</h2>
+        <form id="event-form" novalidate>
+          <div class="field">
+            <label for="event-title">Titolo</label>
+            <input id="event-title" name="title" type="text" required>
+          </div>
+
+          <div class="field">
+            <label for="event-description">Descrizione</label>
+            <textarea id="event-description" name="description" rows="4"></textarea>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="event-date">Data</label>
+              <input id="event-date" name="event_date" type="date" required>
+            </div>
+            <div class="field">
+              <label for="event-time">Ora</label>
+              <input id="event-time" name="start_time" type="time">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="event-location">Luogo</label>
+            <input id="event-location" name="location" type="text">
+          </div>
+
+          <div class="field">
+            <label for="event-photo">Foto</label>
+            <input id="event-photo" name="photo" type="file" accept="image/*">
+            <img id="photo-preview" alt="" hidden>
+            <button class="btn btn-ghost btn-icon" type="button" id="remove-photo-btn" hidden style="margin-top:0.5rem; align-self:flex-start;">Rimuovi foto</button>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Link (facoltativi)</span>
+            <div id="links-rows"></div>
+            <button class="btn btn-ghost" type="button" id="add-link-btn">+ Aggiungi link</button>
+          </div>
+
+          <p class="form-error" id="event-error" role="alert" hidden></p>
+          <p class="form-status" id="event-status" role="status" hidden></p>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit" id="save-btn">Salva evento</button>
+            <button class="btn btn-ghost" type="button" id="cancel-edit-btn" hidden>Annulla modifica</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel">
+        <h2>Eventi caricati</h2>
+        <p class="muted" id="events-list-status">Caricamento…</p>
+        <ul class="admin-list" id="events-list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/vendor/supabase.min.js"></script>
+  <script type="module">
+    import { supabase, isConfigured, fmtDate, fmtTime } from '../assets/supabase.js';
+
+    var configWarning = document.getElementById('config-warning');
+    var loginView = document.getElementById('login-view');
+    var appView = document.getElementById('app-view');
+    var logoutBtn = document.getElementById('logout-btn');
+    var loginForm = document.getElementById('login-form');
+    var loginError = document.getElementById('login-error');
+
+    var eventForm = document.getElementById('event-form');
+    var formTitle = document.getElementById('form-title');
+    var eventFormPanel = document.getElementById('event-form-panel');
+    var titleInput = document.getElementById('event-title');
+    var descriptionInput = document.getElementById('event-description');
+    var dateInput = document.getElementById('event-date');
+    var timeInput = document.getElementById('event-time');
+    var locationInput = document.getElementById('event-location');
+    var photoInput = document.getElementById('event-photo');
+    var photoPreview = document.getElementById('photo-preview');
+    var removePhotoBtn = document.getElementById('remove-photo-btn');
+    var linksRows = document.getElementById('links-rows');
+    var addLinkBtn = document.getElementById('add-link-btn');
+    var eventError = document.getElementById('event-error');
+    var eventStatus = document.getElementById('event-status');
+    var saveBtn = document.getElementById('save-btn');
+    var cancelEditBtn = document.getElementById('cancel-edit-btn');
+
+    var eventsListStatus = document.getElementById('events-list-status');
+    var eventsList = document.getElementById('events-list');
+
+    var editingEvent = null;
+    var selectedPhotoFile = null;
+    var removePhoto = false;
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function addLinkRow(label, url) {
+      var row = document.createElement('div');
+      row.className = 'link-row';
+      row.innerHTML =
+        '<input type="text" class="link-label" placeholder="Etichetta (es. Facebook)" value="' + escapeHtml(label || '') + '">' +
+        '<input type="url" class="link-url" placeholder="https://…" value="' + escapeHtml(url || '') + '">' +
+        '<button type="button" class="btn btn-ghost btn-icon remove-link-btn" aria-label="Rimuovi link">✕</button>';
+      row.querySelector('.remove-link-btn').addEventListener('click', function () { row.remove(); });
+      linksRows.appendChild(row);
+    }
+
+    function resetForm() {
+      editingEvent = null;
+      formTitle.textContent = 'Nuovo evento';
+      eventForm.reset();
+      linksRows.innerHTML = '';
+      addLinkRow();
+      selectedPhotoFile = null;
+      removePhoto = false;
+      photoPreview.hidden = true;
+      photoPreview.removeAttribute('src');
+      removePhotoBtn.hidden = true;
+      cancelEditBtn.hidden = true;
+      eventError.hidden = true;
+    }
+
+    function startEdit(ev) {
+      editingEvent = ev;
+      formTitle.textContent = 'Modifica evento';
+      titleInput.value = ev.title || '';
+      descriptionInput.value = ev.description || '';
+      dateInput.value = ev.event_date || '';
+      timeInput.value = ev.start_time ? ev.start_time.slice(0, 5) : '';
+      locationInput.value = ev.location || '';
+
+      linksRows.innerHTML = '';
+      var links = Array.isArray(ev.links) ? ev.links : [];
+      if (links.length) {
+        links.forEach(function (l) { addLinkRow(l.label, l.url); });
+      } else {
+        addLinkRow();
+      }
+
+      selectedPhotoFile = null;
+      removePhoto = false;
+      photoInput.value = '';
+      if (ev.photo_url) {
+        photoPreview.src = ev.photo_url;
+        photoPreview.hidden = false;
+        removePhotoBtn.hidden = false;
+      } else {
+        photoPreview.hidden = true;
+        photoPreview.removeAttribute('src');
+        removePhotoBtn.hidden = true;
+      }
+
+      cancelEditBtn.hidden = false;
+      eventError.hidden = true;
+      eventFormPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resizeImage(file, maxDim) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = function () {
+          var img = new Image();
+          img.onerror = reject;
+          img.onload = function () {
+            var width = img.width, height = img.height;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) { height = Math.round(height * maxDim / width); width = maxDim; }
+              else { width = Math.round(width * maxDim / height); height = maxDim; }
+            }
+            var canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+            canvas.toBlob(function (blob) {
+              if (blob) resolve(blob); else reject(new Error('Impossibile elaborare la foto.'));
+            }, 'image/jpeg', 0.82);
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function uploadPhoto(blob) {
+      var path = crypto.randomUUID() + '.jpg';
+      var up = await supabase.storage.from('event-photos').upload(path, blob, { contentType: 'image/jpeg', upsert: false });
+      if (up.error) throw up.error;
+      var pub = supabase.storage.from('event-photos').getPublicUrl(path);
+      return { photo_url: pub.data.publicUrl, photo_path: path };
+    }
+
+    async function deletePhoto(path) {
+      if (!path) return;
+      await supabase.storage.from('event-photos').remove([path]);
+    }
+
+    async function handleDelete(ev) {
+      if (!confirm('Eliminare l\'evento "' + ev.title + '"? L\'operazione non è reversibile.')) return;
+      try {
+        if (ev.photo_path) await deletePhoto(ev.photo_path);
+        var res = await supabase.from('events').delete().eq('id', ev.id);
+        if (res.error) throw res.error;
+        if (editingEvent && editingEvent.id === ev.id) resetForm();
+        await loadEventsList();
+      } catch (err) {
+        alert('Errore durante l\'eliminazione: ' + err.message);
+      }
+    }
+
+    async function loadEventsList() {
+      eventsListStatus.hidden = false;
+      eventsListStatus.textContent = 'Caricamento…';
+      try {
+        var res = await supabase.from('events').select('*').order('event_date', { ascending: false });
+        if (res.error) throw res.error;
+        var data = res.data || [];
+        eventsListStatus.hidden = true;
+
+        if (!data.length) {
+          eventsList.innerHTML = '<li class="muted">Nessun evento caricato.</li>';
+          return;
+        }
+
+        eventsList.innerHTML = '';
+        data.forEach(function (ev) {
+          var li = document.createElement('li');
+          li.className = 'admin-list-item';
+          var meta = fmtDate(ev.event_date) + (ev.start_time ? ' · ' + fmtTime(ev.start_time) : '');
+          li.innerHTML =
+            '<div class="admin-list-info"><strong>' + escapeHtml(ev.title) + '</strong><span class="muted">' + escapeHtml(meta) + '</span></div>' +
+            '<div class="admin-list-actions"><button type="button" class="btn btn-ghost edit-btn">Modifica</button><button type="button" class="btn btn-danger delete-btn">Elimina</button></div>';
+          li.querySelector('.edit-btn').addEventListener('click', function () { startEdit(ev); });
+          li.querySelector('.delete-btn').addEventListener('click', function () { handleDelete(ev); });
+          eventsList.appendChild(li);
+        });
+      } catch (err) {
+        eventsListStatus.hidden = false;
+        eventsListStatus.textContent = 'Errore nel caricamento degli eventi.';
+      }
+    }
+
+    async function updateView(session) {
+      var loggedIn = !!session;
+      loginView.hidden = loggedIn;
+      appView.hidden = !loggedIn;
+      logoutBtn.hidden = !loggedIn;
+      if (loggedIn) {
+        resetForm();
+        await loadEventsList();
+      }
+    }
+
+    addLinkBtn.addEventListener('click', function () { addLinkRow(); });
+
+    photoInput.addEventListener('change', function () {
+      var file = photoInput.files[0];
+      if (!file) return;
+      selectedPhotoFile = file;
+      removePhoto = false;
+      var reader = new FileReader();
+      reader.onload = function () {
+        photoPreview.src = reader.result;
+        photoPreview.hidden = false;
+        removePhotoBtn.hidden = false;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    removePhotoBtn.addEventListener('click', function () {
+      selectedPhotoFile = null;
+      removePhoto = true;
+      photoInput.value = '';
+      photoPreview.hidden = true;
+      photoPreview.removeAttribute('src');
+      removePhotoBtn.hidden = true;
+    });
+
+    cancelEditBtn.addEventListener('click', resetForm);
+
+    eventForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      eventError.hidden = true;
+      eventStatus.hidden = true;
+      saveBtn.disabled = true;
+
+      try {
+        var title = titleInput.value.trim();
+        var description = descriptionInput.value.trim();
+        var eventDate = dateInput.value;
+        var startTime = timeInput.value || null;
+        var location = locationInput.value.trim();
+
+        if (!title || !eventDate) throw new Error('Titolo e data sono obbligatori.');
+
+        var links = Array.prototype.slice.call(linksRows.querySelectorAll('.link-row')).map(function (row) {
+          return {
+            label: row.querySelector('.link-label').value.trim(),
+            url: row.querySelector('.link-url').value.trim()
+          };
+        }).filter(function (l) { return l.url; });
+
+        var photoUrl = editingEvent ? editingEvent.photo_url : null;
+        var photoPath = editingEvent ? editingEvent.photo_path : null;
+
+        if (selectedPhotoFile) {
+          var blob = await resizeImage(selectedPhotoFile, 1600);
+          var oldPath = photoPath;
+          var uploaded = await uploadPhoto(blob);
+          photoUrl = uploaded.photo_url;
+          photoPath = uploaded.photo_path;
+          if (oldPath) await deletePhoto(oldPath);
+        } else if (removePhoto) {
+          if (photoPath) await deletePhoto(photoPath);
+          photoUrl = null;
+          photoPath = null;
+        }
+
+        var payload = {
+          title: title,
+          description: description,
+          event_date: eventDate,
+          start_time: startTime,
+          location: location,
+          links: links,
+          photo_url: photoUrl,
+          photo_path: photoPath
+        };
+
+        var result = editingEvent
+          ? await supabase.from('events').update(payload).eq('id', editingEvent.id)
+          : await supabase.from('events').insert(payload);
+
+        if (result.error) throw result.error;
+
+        eventStatus.textContent = 'Evento salvato.';
+        eventStatus.hidden = false;
+        resetForm();
+        await loadEventsList();
+      } catch (err) {
+        eventError.textContent = err.message || 'Errore durante il salvataggio.';
+        eventError.hidden = false;
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+
+    loginForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      loginError.hidden = true;
+      var email = loginForm.email.value.trim();
+      var password = loginForm.password.value;
+      var submitBtn = loginForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      try {
+        var res = await supabase.auth.signInWithPassword({ email: email, password: password });
+        if (res.error) throw res.error;
+        loginForm.reset();
+      } catch (err) {
+        loginError.textContent = 'Accesso non riuscito: controlla email e password.';
+        loginError.hidden = false;
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    logoutBtn.addEventListener('click', async function () {
+      await supabase.auth.signOut();
+    });
+
+    addLinkRow();
+
+    if (!isConfigured) {
+      configWarning.hidden = false;
+      loginView.hidden = true;
+    } else {
+      supabase.auth.onAuthStateChange(function (_event, session) { updateView(session); });
+      supabase.auth.getSession().then(function (res) { updateView(res.data.session); });
+    }
+  </script>
+
+</body>
+</html>

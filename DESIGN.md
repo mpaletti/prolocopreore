@@ -44,6 +44,8 @@ Famiglia unica: **Bricolage Grotesque** (variabile, pesi 400–800, **self-hosta
 - **Carosello**: dissolvenza incrociata 1.1s tra slide, autoavanzamento 6s. "Zoom d'arrivo" sulla slide attiva: da scale 1.09 decelera a 1.02 in 2.6s (ease-out-cubic) e poi si ferma — mai zoom lento continuo, che causa shimmer sub-pixel sui dettagli fini; le immagini hanno transform 3D di base + `will-change` per restare su layer GPU. Controlli: frecce prev/next, pausa/riproduzione (WCAG 2.2.2), indicatori a segmento con riempimento progressivo. Tastiera ←/→, swipe touch, pausa a tab nascosta. Prima slide visibile senza JS.
 - **Header**: fisso, trasparente su scrim sfumato, logo knockout bianco + wordmark, link "Informazioni" che scorre al footer.
 - **Footer**: dati istituzionali in `<dl>` raggruppati (Associazione / Contatti / Dati fiscali), link con sottolineatura al hover, accento blu.
+- **Eventi** (`#eventi`, tra hero e footer): stessa superficie `--ink-2` del footer per le card, bordo `--line`, raggio 14px. Due gruppi: "Prossimi eventi" (card intere con foto 3:2, badge data in overlay, descrizione, link) e "Archivio" (card compatte orizzontali, foto 1:1 120px, senza descrizione). Stati gestiti via JS: caricamento, vuoto (con rimando ai social), errore; foto mancante = placeholder col logo knockout su `--ink`. Dati letti da Supabase (vedi sotto).
+- **Gestione eventi** (`/management`, non linkata dalla home, `noindex`): stesso sistema visivo ma layout applicativo (non fotografico) — header statico con bordo invece che overlay, pannelli `--ink-2` per form e lista. Login email/password (Supabase Auth), CRUD eventi, upload foto con ridimensionamento lato client (canvas, cap 1600px) prima dell'upload sullo storage.
 
 ## Motion
 
@@ -56,3 +58,5 @@ Famiglia unica: **Bricolage Grotesque** (variabile, pesi 400–800, **self-hosta
 - `assets/pozfest-*.jpg` — 12 fotografie dalle feste al Parco al Poz (POZFEST24, POZ Party, POZ FEST 2026; ~2048×1365), ordinate nel carosello alternando persone e cibo, usate con `object-fit: cover`
 - `assets/fonts/*.woff2` — Bricolage Grotesque variabile self-hostata (subset latin + latin-ext)
 - `privacy.html` — informativa privacy, stesso sistema visivo (chrome d'inchiostro, prosa max 68ch), linkata dal footer
+- `assets/vendor/supabase.min.js` — `@supabase/supabase-js` UMD, vendorizzato (nessuna richiesta a CDN di terzi a runtime, coerente con i font self-hostati)
+- `assets/supabase.js` — client Supabase condiviso da home e `/management`, più helper di formattazione data/ora

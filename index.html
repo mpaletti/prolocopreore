@@ -475,6 +475,162 @@
       font-size: 0.85rem;
     }
 
+    /* ---------- Eventi ---------- */
+
+    .events {
+      background: var(--ink);
+      padding: clamp(3rem, 7vw, 5rem) var(--pad);
+    }
+
+    .no-js .events-status,
+    .no-js .events-group {
+      display: none;
+    }
+
+    .events-head h2 {
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .events-status {
+      margin-top: 1.5rem;
+      color: var(--text-dim);
+      font-size: 0.95rem;
+    }
+
+    .events-group {
+      margin-top: clamp(2rem, 4vw, 3rem);
+    }
+
+    .events-subhead {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .events-empty {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      max-width: 60ch;
+    }
+
+    .events-grid {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.75rem;
+    }
+
+    .event-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--ink-2);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.25s var(--ease);
+    }
+    .event-card:hover { border-color: oklch(100% 0 0 / 0.3); }
+
+    .event-photo {
+      position: relative;
+      aspect-ratio: 3 / 2;
+      background: var(--ink);
+      flex-shrink: 0;
+    }
+    .event-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .event-photo.is-placeholder { display: grid; place-items: center; }
+    .event-photo.is-placeholder img {
+      width: 40%;
+      height: 40%;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: 0.5;
+    }
+
+    .event-date-badge {
+      position: absolute;
+      top: 0.85rem;
+      left: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.1;
+      padding: 0.4rem 0.65rem;
+      border-radius: 10px;
+      background: oklch(15% 0.01 255 / 0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid oklch(100% 0 0 / 0.25);
+    }
+    .event-date-badge strong { font-size: 1.15rem; font-weight: 800; }
+    .event-date-badge span {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .event-body {
+      padding: 1.25rem 1.35rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .event-body h4 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .event-meta {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+    .event-desc {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      max-width: 60ch;
+    }
+    .event-links {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+      margin-top: 0.2rem;
+    }
+    .event-links a { font-size: 0.85rem; font-weight: 600; }
+
+    /* Archivio: card compatte in riga, senza descrizione */
+    .events-grid--archive {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    .event-card--compact { flex-direction: row; }
+    .event-card--compact .event-photo { width: 120px; aspect-ratio: 1; }
+    .event-card--compact .event-date-badge {
+      top: 0.5rem;
+      left: 0.5rem;
+      padding: 0.25rem 0.4rem;
+    }
+    .event-card--compact .event-date-badge strong { font-size: 0.9rem; }
+    .event-card--compact .event-date-badge span { font-size: 0.6rem; }
+    .event-card--compact .event-body {
+      padding: 0.9rem 1.1rem;
+      gap: 0.3rem;
+      justify-content: center;
+    }
+    .event-card--compact .event-body h4 { font-size: 1rem; }
+
     /* ---------- Mobile ---------- */
 
     @media (max-width: 680px) {
@@ -505,6 +661,9 @@
         align-items: flex-start;
         gap: 1rem;
       }
+
+      .event-card--compact .event-photo { width: 88px; }
+      .event-card--compact .event-body { padding: 0.75rem 0.9rem; }
     }
 
     /* ---------- Reduced motion ---------- */
@@ -528,14 +687,14 @@
 </head>
 <body>
 
-  <a class="skip-link" href="#contatti">Vai alle informazioni sull'associazione</a>
+  <a class="skip-link" href="#eventi">Vai al contenuto principale</a>
 
   <header class="site-header">
     <a class="brand" href="/" aria-label="Pro Loco di Preore — pagina iniziale">
       <img src="assets/logo.svg" alt="">
       <span>Pro Loco Preore</span>
     </a>
-    <a class="header-link" href="#contatti">Contatti</a>
+    <a class="header-link" href="#eventi">Eventi</a>
   </header>
 
   <main>
@@ -545,7 +704,7 @@
           <img src="assets/pozfest-01-tavoli.jpg" alt="I tavoli della festa al tramonto tra i gazebo della Pro Loco e i filari di luci, con le montagne sullo sfondo" fetchpriority="high" decoding="async">
         </li>
         <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="2 di 12" aria-hidden="true">
-          <img src="assets/pozfest-02-griglia.jpg" alt="In cucina al POZFEST: un volontario alla griglia piena di hamburger" loading="lazy" decoding="async">
+          <img src="assets/pozfest-08-costine.jpg" alt="Costine alla griglia con patatine su un vassoio giallo" loading="lazy" decoding="async">
         </li>
         <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="3 di 12" aria-hidden="true">
           <img src="assets/pozfest-03-dj.jpg" alt="Il dj alla console del POZFEST tra i fasci di luce blu, davanti al pubblico che balla" loading="lazy" decoding="async">
@@ -554,16 +713,16 @@
           <img src="assets/pozfest-04-burger.jpg" alt="Panino con pulled pork e patatine appena serviti dalla cucina del festival" loading="lazy" decoding="async">
         </li>
         <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="5 di 12" aria-hidden="true">
-          <img src="assets/pozfest-05-tendoni.jpg" alt="La festa serale tra i tendoni e i filari di luci del Parco al Poz" loading="lazy" decoding="async">
+          <img src="assets/pozfest-11-parco.jpg" alt="Il Parco al Poz di sera: tendoni illuminati, filari di luci e il pubblico ai tavoli" loading="lazy" decoding="async">
         </li>
         <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="6 di 12" aria-hidden="true">
           <img src="assets/pozfest-06-panino.jpg" alt="Primo piano di un panino al pulled pork con insalata su un vassoio giallo" loading="lazy" decoding="async">
         </li>
         <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="7 di 12" aria-hidden="true">
-          <img src="assets/pozfest-07-pozparty.jpg" alt="Il pubblico del POZ Party sotto il tendone illuminato di verde" loading="lazy" decoding="async">
+          <img src="assets/pozfest-12-palco.jpg" alt="Il pubblico davanti al palco sotto il tendone, in bianco e nero, nel controluce dei riflettori" loading="lazy" decoding="async">
         </li>
         <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="8 di 12" aria-hidden="true">
-          <img src="assets/pozfest-08-costine.jpg" alt="Costine alla griglia con patatine su un vassoio giallo" loading="lazy" decoding="async">
+          <img src="assets/pozfest-02-griglia.jpg" alt="In cucina al POZFEST: un volontario alla griglia piena di hamburger" loading="lazy" decoding="async">
         </li>
         <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="9 di 12" aria-hidden="true">
           <img src="assets/pozfest-09-ballo.jpg" alt="Il pubblico del POZ FEST balla sotto la tensostruttura" loading="lazy" decoding="async">
@@ -572,10 +731,10 @@
           <img src="assets/pozfest-10-volontari.jpg" alt="Un giovane volontario porta ai tavoli tre vassoi con panini e patatine" loading="lazy" decoding="async">
         </li>
         <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="11 di 12" aria-hidden="true">
-          <img src="assets/pozfest-11-parco.jpg" alt="Il Parco al Poz di sera: tendoni illuminati, filari di luci e il pubblico ai tavoli" loading="lazy" decoding="async">
+          <img src="assets/pozfest-05-tendoni.jpg" alt="La festa serale tra i tendoni e i filari di luci del Parco al Poz" loading="lazy" decoding="async">
         </li>
         <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="12 di 12" aria-hidden="true">
-          <img src="assets/pozfest-12-palco.jpg" alt="Il pubblico davanti al palco sotto il tendone, in bianco e nero, nel controluce dei riflettori" loading="lazy" decoding="async">
+          <img src="assets/pozfest-07-pozparty.jpg" alt="Il pubblico del POZ Party sotto il tendone illuminato di verde" loading="lazy" decoding="async">
         </li>
       </ul>
 
@@ -618,6 +777,29 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <section class="events" id="eventi" aria-labelledby="eventi-titolo">
+      <div class="events-head">
+        <h2 id="eventi-titolo">Eventi</h2>
+      </div>
+
+      <p class="events-status">Caricamento eventi…</p>
+
+      <div class="events-group" data-group="prossimi">
+        <h3 class="events-subhead">Prossimi eventi</h3>
+        <p class="events-empty" hidden>Nessun evento in programma al momento — seguici su <a href="https://www.instagram.com/prolocopreore" target="_blank" rel="noopener">Instagram</a> e <a href="https://www.facebook.com/p/Pro-Loco-Preore-100057452411012/" target="_blank" rel="noopener">Facebook</a> per gli aggiornamenti.</p>
+        <ul class="events-grid" aria-live="polite"></ul>
+      </div>
+
+      <div class="events-group events-group--archive" data-group="passati" hidden>
+        <h3 class="events-subhead">Archivio</h3>
+        <ul class="events-grid events-grid--archive"></ul>
+      </div>
+
+      <noscript>
+        <p class="events-status">Per vedere gli eventi in programma serve JavaScript. Nel frattempo seguici su <a href="https://www.instagram.com/prolocopreore" target="_blank" rel="noopener">Instagram</a> e <a href="https://www.facebook.com/p/Pro-Loco-Preore-100057452411012/" target="_blank" rel="noopener">Facebook</a>.</p>
+      </noscript>
     </section>
   </main>
 
@@ -772,6 +954,83 @@
 
       setPlaying(playing);
     })();
+  </script>
+
+  <script src="assets/vendor/supabase.min.js"></script>
+  <script type="module">
+    import { supabase, isConfigured, fmtDateShort, fmtTime, todayISO } from './assets/supabase.js';
+
+    var status = document.querySelector('.events-status');
+    var upcomingList = document.querySelector('[data-group="prossimi"] .events-grid');
+    var upcomingEmpty = document.querySelector('[data-group="prossimi"] .events-empty');
+    var archiveGroup = document.querySelector('[data-group="passati"]');
+    var archiveList = archiveGroup.querySelector('.events-grid');
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function renderCard(ev, compact) {
+      var badge = fmtDateShort(ev.event_date);
+      var meta = [fmtTime(ev.start_time), ev.location].filter(Boolean).join(' · ');
+      var links = Array.isArray(ev.links) ? ev.links : [];
+
+      var photoHtml = ev.photo_url
+        ? '<div class="event-photo"><img src="' + escapeHtml(ev.photo_url) + '" alt="" loading="lazy" decoding="async">'
+        : '<div class="event-photo is-placeholder"><img src="assets/logo.svg" alt="" loading="lazy">';
+      photoHtml += '<span class="event-date-badge"><strong>' + badge.day + '</strong><span>' + badge.month + '</span></span></div>';
+
+      var metaHtml = meta ? '<p class="event-meta">' + escapeHtml(meta) + '</p>' : '';
+      var descHtml = (!compact && ev.description) ? '<p class="event-desc">' + escapeHtml(ev.description) + '</p>' : '';
+      var linksHtml = (!compact && links.length)
+        ? '<ul class="event-links">' + links.map(function (l) {
+            return '<li><a href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener">' + escapeHtml(l.label || l.url) + '</a></li>';
+          }).join('') + '</ul>'
+        : '';
+
+      return '<li class="event-card' + (compact ? ' event-card--compact' : '') + '">' + photoHtml +
+        '<div class="event-body"><h4>' + escapeHtml(ev.title) + '</h4>' + metaHtml + descHtml + linksHtml + '</div></li>';
+    }
+
+    async function loadEvents() {
+      if (!isConfigured) {
+        status.textContent = 'Sezione eventi in allestimento — torna a trovarci a breve.';
+        return;
+      }
+
+      try {
+        var res = await supabase.from('events').select('*').order('event_date', { ascending: true });
+        if (res.error) { throw res.error; }
+        var data = res.data || [];
+
+        var today = todayISO();
+        var upcoming = data.filter(function (e) { return e.event_date >= today; });
+        var past = data.filter(function (e) { return e.event_date < today; }).reverse();
+
+        status.hidden = true;
+
+        if (upcoming.length) {
+          upcomingList.innerHTML = upcoming.map(function (e) { return renderCard(e, false); }).join('');
+          upcomingEmpty.hidden = true;
+        } else {
+          upcomingList.innerHTML = '';
+          upcomingEmpty.hidden = false;
+        }
+
+        if (past.length) {
+          archiveList.innerHTML = past.map(function (e) { return renderCard(e, true); }).join('');
+          archiveGroup.hidden = false;
+        }
+      } catch (err) {
+        console.error('Errore nel caricamento degli eventi', err);
+        status.hidden = false;
+        status.textContent = 'Non è stato possibile caricare gli eventi al momento — riprova più tardi.';
+      }
+    }
+
+    loadEvents();
   </script>
 
 </body>
