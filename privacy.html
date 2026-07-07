@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Informativa sulla privacy del sito prolocopreore.it — Associazione Pro Loco di Preore APS">
+  <meta name="theme-color" content="#171a20">
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <title>Privacy — Pro Loco di Preore APS</title>
+  <style>
+    @font-face {
+      font-family: "Bricolage Grotesque";
+      font-style: normal;
+      font-weight: 400 800;
+      font-stretch: 100%;
+      font-display: swap;
+      src: url("assets/fonts/bricolage-grotesque-latin.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: "Bricolage Grotesque";
+      font-style: normal;
+      font-weight: 400 800;
+      font-stretch: 100%;
+      font-display: swap;
+      src: url("assets/fonts/bricolage-grotesque-latin-ext.woff2") format("woff2");
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+
+    :root {
+      --ink: oklch(16% 0.012 255);
+      --ink-2: oklch(21% 0.014 255);
+      --line: oklch(32% 0.015 255);
+      --text: oklch(96% 0.004 250);
+      --text-dim: oklch(76% 0.012 252);
+      --accent: oklch(75% 0.115 235);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --pad: clamp(1.25rem, 4vw, 3rem);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Bricolage Grotesque", system-ui, sans-serif;
+      background: var(--ink);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    ::selection { background: var(--accent); color: var(--ink); }
+
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: clamp(1rem, 2.5vw, 1.75rem) var(--pad);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      color: var(--text);
+    }
+    .brand:hover { text-decoration: none; }
+
+    .brand img {
+      width: clamp(48px, 6vw, 62px);
+      height: auto;
+      filter: brightness(0) invert(1);
+    }
+
+    .brand span {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .header-link {
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.55rem 1.1rem;
+      border: 1px solid oklch(100% 0 0 / 0.35);
+      border-radius: 999px;
+      transition: background 0.25s var(--ease), border-color 0.25s var(--ease);
+      white-space: nowrap;
+    }
+    .header-link:hover {
+      text-decoration: none;
+      background: var(--ink-2);
+      border-color: oklch(100% 0 0 / 0.6);
+    }
+
+    main {
+      max-width: 68ch;
+      margin: 0 auto;
+      padding: clamp(2.5rem, 6vw, 4.5rem) var(--pad) clamp(3rem, 7vw, 5rem);
+    }
+
+    h1 {
+      font-size: clamp(1.9rem, 4.5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      text-wrap: balance;
+    }
+
+    .updated {
+      margin-top: 0.75rem;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 2.5rem 0 0.75rem;
+      letter-spacing: -0.01em;
+    }
+
+    p, li { margin-top: 0.75rem; text-wrap: pretty; }
+
+    ul { padding-left: 1.25rem; }
+
+    .site-footer {
+      border-top: 1px solid var(--line);
+      padding: 1.5rem var(--pad) 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 2rem;
+      justify-content: space-between;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Pro Loco di Preore — pagina iniziale">
+      <img src="assets/logo.svg" alt="">
+      <span>Pro Loco Preore</span>
+    </a>
+    <a class="header-link" href="/">Torna al sito</a>
+  </header>
+
+  <main>
+    <h1>Informativa sulla privacy</h1>
+    <p class="updated">Informativa ai sensi dell'art. 13 del Regolamento (UE) 2016/679 (GDPR) · Ultimo aggiornamento: 7 luglio 2026</p>
+
+    <h2>Titolare del trattamento</h2>
+    <p>Associazione Pro Loco di Preore APS, Via Filippo Serafini 92, 38095 Tre Ville, fraz. Preore (TN) — Italia.<br>
+    Email: <a href="mailto:prolocopreore@hotmail.com">prolocopreore@hotmail.com</a> · PEC: <a href="mailto:prolocopreore@pec.it">prolocopreore@pec.it</a></p>
+
+    <h2>Fotografie degli eventi</h2>
+    <p>Su questo sito e sui canali social dell'associazione pubblichiamo fotografie scattate durante gli eventi pubblici che organizziamo (feste, concerti e manifestazioni al Parco al Poz e sul territorio di Tre Ville). Le immagini documentano e promuovono le attività dell'associazione e ritraggono momenti d'insieme delle manifestazioni; la base giuridica del trattamento è il legittimo interesse dell'associazione (art. 6, par. 1, lett. f GDPR) e l'art. 97 della L. 633/1941, che consente la pubblicazione di immagini relative ad avvenimenti svoltisi in pubblico.</p>
+    <p>Non pubblichiamo consapevolmente immagini che possano recare pregiudizio alla dignità delle persone ritratte, né primi piani di minori riconoscibili senza il consenso dei genitori.</p>
+    <p><strong>Se ti riconosci in una fotografia e desideri che venga rimossa</strong>, scrivici a <a href="mailto:prolocopreore@hotmail.com">prolocopreore@hotmail.com</a>: la elimineremo senza ingiustificato ritardo, senza bisogno di motivare la richiesta.</p>
+
+    <h2>Dati di navigazione</h2>
+    <p>Questo sito è composto da sole pagine statiche ed è ospitato su GitHub Pages (GitHub, Inc.). Il sito <strong>non utilizza cookie</strong>, non incorpora strumenti di analisi o tracciamento e non carica risorse da terze parti. Come per qualunque servizio di hosting, GitHub può registrare temporaneamente gli indirizzi IP dei visitatori nei propri log per finalità di sicurezza; per i dettagli si veda l'<a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">informativa privacy di GitHub</a>.</p>
+
+    <h2>Comunicazioni via email</h2>
+    <p>Se ci scrivi agli indirizzi indicati, trattiamo il tuo indirizzo email e il contenuto del messaggio al solo scopo di risponderti.</p>
+
+    <h2>I tuoi diritti</h2>
+    <p>Ai sensi degli artt. 15-22 del GDPR puoi chiedere in qualsiasi momento l'accesso ai dati che ti riguardano, la rettifica, la cancellazione, la limitazione del trattamento o opporti al trattamento, scrivendo ai contatti indicati sopra. Hai inoltre il diritto di proporre reclamo al <a href="https://www.garanteprivacy.it" target="_blank" rel="noopener">Garante per la protezione dei dati personali</a>.</p>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Associazione Pro Loco di Preore APS</p>
+    <p><a href="/">prolocopreore.it</a></p>
+  </footer>
+
+</body>
+</html>

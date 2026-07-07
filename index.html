@@ -1,193 +1,778 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="no-js">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Sito ufficiale dell'Associazione Pro Loco di Preore APS — Preore, Tre Ville (TN)">
-  <meta property="og:title" content="Pro Loco di Preore APS">
-  <meta property="og:description" content="Sito ufficiale dell'Associazione Pro Loco di Preore APS — Preore, Tre Ville (TN)">
+  <meta name="description" content="Sito ufficiale dell'Associazione Pro Loco di Preore APS — comunità, tradizione e divertimento a Preore, Tre Ville (TN)">
+  <meta name="theme-color" content="#171a20">
+  <meta property="og:title" content="Pro Loco Preore APS">
+  <meta property="og:description" content="Comunità, tradizione e divertimento a Preore — Tre Ville, Trentino.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://prolocopreore.it">
+  <meta property="og:image" content="https://prolocopreore.it/assets/pozfest-01-tavoli.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
   <title>Pro Loco di Preore APS</title>
+  <script>document.documentElement.classList.remove('no-js');</script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Associazione Pro Loco di Preore APS",
+    "url": "https://prolocopreore.it",
+    "logo": "https://prolocopreore.it/assets/logo.svg",
+    "email": "prolocopreore@hotmail.com",
+    "sameAs": [
+      "https://www.instagram.com/prolocopreore",
+      "https://www.facebook.com/p/Pro-Loco-Preore-100057452411012/"
+    ],
+    "vatID": "01657620223",
+    "taxID": "95001500222",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Via Filippo Serafini, 92",
+      "postalCode": "38095",
+      "addressLocality": "Tre Ville, fraz. Preore",
+      "addressRegion": "TN",
+      "addressCountry": "IT"
+    }
+  }
+  </script>
   <style>
+    /* Bricolage Grotesque self-hostato (variabile, opsz 12-96 / wght 400-800):
+       nessuna richiesta a terze parti, niente IP inviati a Google */
+    @font-face {
+      font-family: "Bricolage Grotesque";
+      font-style: normal;
+      font-weight: 400 800;
+      font-stretch: 100%;
+      font-display: swap;
+      src: url("assets/fonts/bricolage-grotesque-latin.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: "Bricolage Grotesque";
+      font-style: normal;
+      font-weight: 400 800;
+      font-stretch: 100%;
+      font-display: swap;
+      src: url("assets/fonts/bricolage-grotesque-latin-ext.woff2") format("woff2");
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+
+    :root {
+      --ink: oklch(16% 0.012 255);
+      --ink-2: oklch(21% 0.014 255);
+      --line: oklch(32% 0.015 255);
+      --text: oklch(96% 0.004 250);
+      --text-dim: oklch(76% 0.012 252);
+      --accent: oklch(75% 0.115 235);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --pad: clamp(1.25rem, 4vw, 3rem);
+      --z-slides: 1;
+      --z-scrim: 2;
+      --z-hero-ui: 3;
+      --z-header: 10;
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      background: #f7f7f5;
-      color: #1a1a1a;
+      font-family: "Bricolage Grotesque", system-ui, sans-serif;
+      background: var(--ink);
+      color: var(--text);
       line-height: 1.6;
-      min-height: 100vh;
+    }
+
+    img { max-width: 100%; display: block; }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    ::selection { background: var(--accent); color: var(--ink); }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      z-index: 100;
+      background: var(--ink);
+      color: var(--text);
+      padding: 0.75rem 1.25rem;
+      border-radius: 6px;
+    }
+    .skip-link:focus {
+      left: 1rem;
+      top: 1rem;
+    }
+
+    /* ---------- Header ---------- */
+
+    .site-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: var(--z-header);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: clamp(1rem, 2.5vw, 1.75rem) var(--pad);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      color: var(--text);
+    }
+    .brand:hover { text-decoration: none; }
+
+    .brand img {
+      width: clamp(48px, 6vw, 62px);
+      height: auto;
+      /* resa "knockout" bianca del logo a china, come nel watermark ufficiale */
+      filter: brightness(0) invert(1) drop-shadow(0 1px 8px oklch(10% 0.01 255 / 0.45));
+    }
+
+    .brand span {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      text-shadow: 0 1px 14px oklch(10% 0.01 255 / 0.6);
+    }
+
+    .header-link {
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.55rem 1.1rem;
+      border: 1px solid oklch(100% 0 0 / 0.35);
+      border-radius: 999px;
+      background: oklch(15% 0.01 255 / 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: background 0.25s var(--ease), border-color 0.25s var(--ease);
+      white-space: nowrap;
+    }
+    .header-link:hover {
+      text-decoration: none;
+      background: oklch(15% 0.01 255 / 0.55);
+      border-color: oklch(100% 0 0 / 0.6);
+    }
+
+    /* ---------- Carosello hero ---------- */
+
+    .hero {
+      position: relative;
+      height: 100vh;
+      height: 100svh;
+      min-height: 480px;
+      overflow: hidden;
+      background: var(--ink-2);
+    }
+
+    .slides {
+      list-style: none;
+      position: absolute;
+      inset: 0;
+      z-index: var(--z-slides);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 1.1s var(--ease);
+    }
+
+    .slide.is-active {
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .slide.is-leaving {
+      opacity: 1;
+      z-index: 1;
+      transition: none;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* stato base = frame iniziale del Ken Burns: il layer resta composito, niente scatti */
+      transform: translate3d(0, 0, 0) scale3d(1.02, 1.02, 1);
+      backface-visibility: hidden;
+    }
+
+    /* zoom d'arrivo: parte ampio e veloce, decelera e si FERMA sullo stato base.
+       Il movimento lento continuo causava shimmer sub-pixel sui dettagli fini;
+       da fermo l'immagine resta nitida. */
+    .slide.is-active img,
+    .slide.is-leaving img {
+      animation: kb-a 2.6s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+      will-change: transform;
+    }
+    .slide:nth-child(even).is-active img,
+    .slide:nth-child(even).is-leaving img {
+      animation-name: kb-b;
+    }
+
+    @keyframes kb-a {
+      from { transform: translate3d(1.4%, -0.9%, 0) scale3d(1.09, 1.09, 1); }
+      to   { transform: translate3d(0, 0, 0) scale3d(1.02, 1.02, 1); }
+    }
+    @keyframes kb-b {
+      from { transform: translate3d(-1.4%, 0.9%, 0) scale3d(1.09, 1.09, 1); }
+      to   { transform: translate3d(0, 0, 0) scale3d(1.02, 1.02, 1); }
+    }
+
+    .scrim {
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: var(--z-scrim);
+      pointer-events: none;
+    }
+    .scrim-top {
+      top: 0;
+      height: clamp(110px, 18vh, 180px);
+      background: linear-gradient(to bottom, oklch(10% 0.01 255 / 0.62), transparent);
+    }
+    .scrim-bottom {
+      bottom: 0;
+      height: min(55vh, 480px);
+      background: linear-gradient(to top, oklch(10% 0.01 255 / 0.82), oklch(10% 0.01 255 / 0.35) 45%, transparent);
+    }
+
+    .hero-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: var(--z-hero-ui);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem 3rem;
+      padding: 0 var(--pad) clamp(1.5rem, 4.5vh, 3rem);
+    }
+
+    .hero-copy h1 {
+      font-size: clamp(2.4rem, 6.5vw, 4.75rem);
+      font-weight: 800;
+      line-height: 1.02;
+      letter-spacing: -0.025em;
+      text-wrap: balance;
+      text-shadow: 0 2px 28px oklch(10% 0.01 255 / 0.5);
+    }
+
+    .hero-copy .tagline {
+      margin-top: 0.9rem;
+      max-width: 48ch;
+      font-size: clamp(1rem, 1.6vw, 1.15rem);
+      font-weight: 500;
+      color: oklch(94% 0.006 250);
+      text-shadow: 0 1px 16px oklch(10% 0.01 255 / 0.6);
+      text-wrap: pretty;
+    }
+
+    .hero-copy .photo-credit {
+      margin-top: 0.65rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: oklch(88% 0.01 250);
+      text-shadow: 0 1px 12px oklch(10% 0.01 255 / 0.7);
+    }
+
+    /* ---------- Controlli carosello ---------- */
+
+    .hero-controls {
       display: flex;
       flex-direction: column;
+      align-items: flex-end;
+      gap: 0.9rem;
+      margin-left: auto;
     }
 
-    header {
-      background: #fff;
-      border-bottom: 1px solid #e2e2e0;
-      padding: 1.5rem 1rem;
+    .no-js .hero-controls { display: none; }
+
+    .segments {
+      display: flex;
+      gap: 7px;
+      width: clamp(170px, 22vw, 300px);
     }
 
-    .header-inner {
-      max-width: 720px;
-      margin: 0 auto;
+    .seg {
+      flex: 1;
+      min-width: 0;
+      height: 26px;
+      padding: 11px 0;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .seg::before {
+      content: "";
+      display: block;
+      height: 4px;
+      border-radius: 999px;
+      background: oklch(100% 0 0 / 0.32);
+      box-shadow: 0 1px 6px oklch(10% 0.01 255 / 0.35);
+      transition: background 0.25s var(--ease);
+    }
+    .seg.is-active::before { background: oklch(100% 0 0 / 0.55); }
+
+    .seg::after {
+      content: "";
+      position: absolute;
+      top: 11px;
+      left: 0;
+      height: 4px;
+      width: 100%;
+      border-radius: 999px;
+      background: oklch(100% 0 0 / 0.95);
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+
+    .seg.is-active::after {
+      animation: seg-fill var(--interval, 5s) linear forwards;
+    }
+    .hero.is-paused .seg.is-active::after {
+      animation-play-state: paused;
+    }
+    @keyframes seg-fill {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+
+    .ctrl-buttons {
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    .ctrl {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid oklch(100% 0 0 / 0.35);
+      background: oklch(15% 0.01 255 / 0.32);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.25s var(--ease), border-color 0.25s var(--ease), transform 0.15s var(--ease);
+    }
+    .ctrl:hover {
+      background: oklch(15% 0.01 255 / 0.58);
+      border-color: oklch(100% 0 0 / 0.6);
+    }
+    .ctrl:active { transform: scale(0.94); }
+    .ctrl svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .ctrl .icon-play { display: none; }
+    .hero.is-paused .icon-pause { display: none; }
+    .hero.is-paused .icon-play { display: block; }
+
+    /* ---------- Footer ---------- */
+
+    .site-footer {
+      background: var(--ink);
+      padding: clamp(3rem, 7vw, 5rem) var(--pad) 0;
+    }
+
+    .footer-head {
       display: flex;
       align-items: center;
       gap: 1.25rem;
+      padding-bottom: clamp(2rem, 4vw, 3rem);
     }
 
-    .header-inner img {
-      width: 72px;
-      height: 72px;
-      object-fit: contain;
-      flex-shrink: 0;
+    .footer-head img {
+      width: 76px;
+      height: auto;
+      filter: brightness(0) invert(1);
+      opacity: 0.92;
     }
 
-    .header-text h1 {
-      font-size: 1.35rem;
+    .footer-head .name {
+      font-size: clamp(1.25rem, 2.4vw, 1.6rem);
       font-weight: 700;
-      color: #1a1a1a;
-      line-height: 1.25;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      text-wrap: balance;
     }
 
-    .header-text p {
-      font-size: 0.875rem;
-      color: #555;
-      margin-top: 0.2rem;
+    .footer-head .sub {
+      margin-top: 0.3rem;
+      color: var(--text-dim);
+      font-size: 0.95rem;
     }
 
-    main {
-      flex: 1;
-      max-width: 720px;
-      width: 100%;
-      margin: 2rem auto;
-      padding: 0 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .card {
-      background: #fff;
-      border: 1px solid #e2e2e0;
-      border-radius: 8px;
-      padding: 1.5rem;
-    }
-
-    .card-title {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #888;
-      margin-bottom: 0.75rem;
-    }
-
-    .ownership-notice {
-      background: #f0f7ff;
-      border: 1px solid #c3dcf7;
-      border-radius: 8px;
-      padding: 1.25rem 1.5rem;
-    }
-
-    .ownership-notice p {
-      font-size: 1rem;
-      color: #1a1a1a;
-      line-height: 1.6;
-    }
-
-    .ownership-notice strong {
-      color: #0057a8;
-    }
-
-    dl {
+    .footer-grid {
       display: grid;
-      grid-template-columns: max-content 1fr;
-      gap: 0.45rem 1rem;
-      font-size: 0.9rem;
+      grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+      gap: 2rem 3rem;
+      padding: clamp(2rem, 4vw, 3rem) 0;
+      border-top: 1px solid var(--line);
     }
 
-    dt {
-      color: #666;
-      white-space: nowrap;
+    .footer-grid h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
     }
 
-    dd {
-      color: #1a1a1a;
+    .footer-grid dl {
+      display: grid;
+      gap: 0.85rem;
+      font-size: 0.95rem;
+    }
+
+    .footer-grid dt {
+      color: var(--text-dim);
+      font-size: 0.82rem;
+    }
+
+    .footer-grid dd { font-weight: 500; }
+
+    .footer-grid address {
+      font-style: normal;
       font-weight: 500;
+      font-size: 0.95rem;
+    }
+    .footer-grid address .muted {
+      display: block;
+      margin-top: 0.85rem;
+      color: var(--text-dim);
+      font-size: 0.82rem;
+      font-weight: 400;
     }
 
-    dd a {
-      color: #0057a8;
-      text-decoration: none;
+    .footer-bottom {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 2rem;
+      justify-content: space-between;
+      border-top: 1px solid var(--line);
+      padding: 1.5rem 0 2rem;
+      color: var(--text-dim);
+      font-size: 0.85rem;
     }
 
-    dd a:hover {
-      text-decoration: underline;
+    /* ---------- Mobile ---------- */
+
+    @media (max-width: 680px) {
+      .brand span { display: none; }
+
+      .hero-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.4rem;
+      }
+
+      .hero-controls {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin-left: 0;
+      }
+
+      .segments {
+        flex: 1;
+        width: auto;
+        margin-right: 1rem;
+      }
+
+      .footer-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
     }
 
-    footer {
-      text-align: center;
-      padding: 1.5rem 1rem;
-      font-size: 0.8rem;
-      color: #999;
-      border-top: 1px solid #e2e2e0;
-      background: #fff;
-    }
+    /* ---------- Reduced motion ---------- */
 
-    @media (max-width: 480px) {
-      .header-inner img { width: 56px; height: 56px; }
-      .header-text h1 { font-size: 1.1rem; }
-      dl { grid-template-columns: 1fr; gap: 0.15rem; }
-      dt { font-size: 0.75rem; color: #888; margin-top: 0.5rem; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+
+      .slide { transition-duration: 0.3s; }
+
+      .slide.is-active img,
+      .slide.is-leaving img {
+        animation: none;
+      }
+
+      .seg.is-active::after {
+        animation: none;
+        transform: scaleX(1);
+      }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="header-inner">
-      <img src="assets/logo.svg" alt="Logo Pro Loco di Preore">
-      <div class="header-text">
-        <h1>Associazione Pro Loco di Preore</h1>
-        <p>Preore - Tre Ville (TN)</p>
-      </div>
-    </div>
+  <a class="skip-link" href="#contatti">Vai alle informazioni sull'associazione</a>
+
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Pro Loco di Preore — pagina iniziale">
+      <img src="assets/logo.svg" alt="">
+      <span>Pro Loco Preore</span>
+    </a>
+    <a class="header-link" href="#contatti">Contatti</a>
   </header>
 
   <main>
-    <div class="card">
-      <p class="card-title">Dati dell'associazione</p>
-      <dl>
-        <dt>Ragione sociale</dt>
-        <dd>Associazione Pro Loco di Preore APS</dd>
+    <section class="hero" id="carosello" aria-roledescription="carosello" aria-label="Fotografie dagli eventi della Pro Loco">
+      <ul class="slides">
+        <li class="slide is-active" role="group" aria-roledescription="diapositiva" aria-label="1 di 12">
+          <img src="assets/pozfest-01-tavoli.jpg" alt="I tavoli della festa al tramonto tra i gazebo della Pro Loco e i filari di luci, con le montagne sullo sfondo" fetchpriority="high" decoding="async">
+        </li>
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="2 di 12" aria-hidden="true">
+          <img src="assets/pozfest-02-griglia.jpg" alt="In cucina al POZFEST: un volontario alla griglia piena di hamburger" loading="lazy" decoding="async">
+        </li>
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="3 di 12" aria-hidden="true">
+          <img src="assets/pozfest-03-dj.jpg" alt="Il dj alla console del POZFEST tra i fasci di luce blu, davanti al pubblico che balla" loading="lazy" decoding="async">
+        </li>
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="4 di 12" aria-hidden="true">
+          <img src="assets/pozfest-04-burger.jpg" alt="Panino con pulled pork e patatine appena serviti dalla cucina del festival" loading="lazy" decoding="async">
+        </li>
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="5 di 12" aria-hidden="true">
+          <img src="assets/pozfest-05-tendoni.jpg" alt="La festa serale tra i tendoni e i filari di luci del Parco al Poz" loading="lazy" decoding="async">
+        </li>
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="6 di 12" aria-hidden="true">
+          <img src="assets/pozfest-06-panino.jpg" alt="Primo piano di un panino al pulled pork con insalata su un vassoio giallo" loading="lazy" decoding="async">
+        </li>
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="7 di 12" aria-hidden="true">
+          <img src="assets/pozfest-07-pozparty.jpg" alt="Il pubblico del POZ Party sotto il tendone illuminato di verde" loading="lazy" decoding="async">
+        </li>
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="8 di 12" aria-hidden="true">
+          <img src="assets/pozfest-08-costine.jpg" alt="Costine alla griglia con patatine su un vassoio giallo" loading="lazy" decoding="async">
+        </li>
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="9 di 12" aria-hidden="true">
+          <img src="assets/pozfest-09-ballo.jpg" alt="Il pubblico del POZ FEST balla sotto la tensostruttura" loading="lazy" decoding="async">
+        </li>
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="10 di 12" aria-hidden="true">
+          <img src="assets/pozfest-10-volontari.jpg" alt="Un giovane volontario porta ai tavoli tre vassoi con panini e patatine" loading="lazy" decoding="async">
+        </li>
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="11 di 12" aria-hidden="true">
+          <img src="assets/pozfest-11-parco.jpg" alt="Il Parco al Poz di sera: tendoni illuminati, filari di luci e il pubblico ai tavoli" loading="lazy" decoding="async">
+        </li>
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="12 di 12" aria-hidden="true">
+          <img src="assets/pozfest-12-palco.jpg" alt="Il pubblico davanti al palco sotto il tendone, in bianco e nero, nel controluce dei riflettori" loading="lazy" decoding="async">
+        </li>
+      </ul>
 
-        <dt>Sede</dt>
-        <dd>Via Filippo Serafini, 92<br>38095 Tre Ville, fraz. Preore (TN) &mdash; Italia</dd>
+      <div class="scrim scrim-top" aria-hidden="true"></div>
+      <div class="scrim scrim-bottom" aria-hidden="true"></div>
 
-        <dt>Partita IVA</dt>
-        <dd>01657620223</dd>
+      <div class="hero-bar">
+        <div class="hero-copy">
+          <h1>Pro Loco Preore</h1>
+          <p class="tagline">Comunità, tradizione e divertimento a Preore — Tre Ville, Trentino.</p>
+          <p class="photo-credit">POZFEST · Parco al Poz</p>
+        </div>
 
-        <dt>Codice fiscale</dt>
-        <dd>95001500222</dd>
-
-        <dt>PEC</dt>
-        <dd><a href="mailto:prolocopreore@pec.it">prolocopreore@pec.it</a></dd>
-
-        <dt>Email</dt>
-        <dd><a href="mailto:prolocopreore@hotmail.com">prolocopreore@hotmail.com</a></dd>
-
-        <dt>Dominio</dt>
-        <dd>prolocopreore.it</dd>
-      </dl>
-    </div>
-
+        <div class="hero-controls">
+          <div class="segments" role="group" aria-label="Scegli la fotografia">
+            <button class="seg is-active" type="button" aria-label="Fotografia 1" aria-current="true"></button>
+            <button class="seg" type="button" aria-label="Fotografia 2"></button>
+            <button class="seg" type="button" aria-label="Fotografia 3"></button>
+            <button class="seg" type="button" aria-label="Fotografia 4"></button>
+            <button class="seg" type="button" aria-label="Fotografia 5"></button>
+            <button class="seg" type="button" aria-label="Fotografia 6"></button>
+            <button class="seg" type="button" aria-label="Fotografia 7"></button>
+            <button class="seg" type="button" aria-label="Fotografia 8"></button>
+            <button class="seg" type="button" aria-label="Fotografia 9"></button>
+            <button class="seg" type="button" aria-label="Fotografia 10"></button>
+            <button class="seg" type="button" aria-label="Fotografia 11"></button>
+            <button class="seg" type="button" aria-label="Fotografia 12"></button>
+          </div>
+          <div class="ctrl-buttons">
+            <button class="ctrl" type="button" data-action="prev" aria-label="Fotografia precedente">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+            </button>
+            <button class="ctrl" type="button" data-action="toggle" aria-label="Metti in pausa il carosello">
+              <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg>
+              <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg>
+            </button>
+            <button class="ctrl" type="button" data-action="next" aria-label="Fotografia successiva">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <footer>
-    <p>&copy; 2026 Associazione Pro Loco di Preore APS</p>
+  <footer class="site-footer" id="contatti">
+    <div class="footer-head">
+      <img src="assets/logo.svg" alt="">
+      <div>
+        <p class="name">Associazione Pro Loco di Preore APS</p>
+        <p class="sub">Associazione di promozione sociale · Preore, Tre Ville (TN)</p>
+      </div>
+    </div>
+
+    <div class="footer-grid">
+      <section aria-labelledby="f-sede">
+        <h2 id="f-sede">Sede</h2>
+        <address>
+          Via Filippo Serafini, 92<br>
+          38095 Tre Ville, fraz. Preore (TN)<br>
+          Italia
+          <span class="muted">Ragione sociale: Associazione Pro Loco di Preore APS</span>
+        </address>
+      </section>
+
+      <section aria-labelledby="f-contatti">
+        <h2 id="f-contatti">Contatti</h2>
+        <dl>
+          <dt>PEC</dt>
+          <dd><a href="mailto:prolocopreore@pec.it">prolocopreore@pec.it</a></dd>
+          <dt>Email</dt>
+          <dd><a href="mailto:prolocopreore@hotmail.com">prolocopreore@hotmail.com</a></dd>
+          <dt>Instagram</dt>
+          <dd><a href="https://www.instagram.com/prolocopreore" target="_blank" rel="noopener">@prolocopreore</a></dd>
+          <dt>Facebook</dt>
+          <dd><a href="https://www.facebook.com/p/Pro-Loco-Preore-100057452411012/" target="_blank" rel="noopener">Pro Loco Preore</a></dd>
+        </dl>
+      </section>
+
+      <section aria-labelledby="f-fiscali">
+        <h2 id="f-fiscali">Dati fiscali</h2>
+        <dl>
+          <dt>Partita IVA</dt>
+          <dd>01657620223</dd>
+          <dt>Codice fiscale</dt>
+          <dd>95001500222</dd>
+        </dl>
+      </section>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 Associazione Pro Loco di Preore APS · <a href="privacy.html">Privacy</a></p>
+      <p>Fotografie: Martina Massetti</p>
+    </div>
   </footer>
+
+  <script>
+    (function () {
+      var INTERVAL = 5000;
+      var FADE = 1200;
+
+      var hero = document.getElementById('carosello');
+      var slides = Array.prototype.slice.call(hero.querySelectorAll('.slide'));
+      var segs = Array.prototype.slice.call(hero.querySelectorAll('.seg'));
+      var toggleBtn = hero.querySelector('[data-action="toggle"]');
+
+      var current = 0;
+      var timer = null;
+      var leaveTimers = {};
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var playing = !reduced.matches;
+
+      hero.style.setProperty('--interval', INTERVAL + 'ms');
+
+      function go(n) {
+        n = (n + slides.length) % slides.length;
+        if (n === current) { restartTimer(); return; }
+        var prev = current;
+
+        slides[prev].classList.remove('is-active');
+        slides[prev].classList.add('is-leaving');
+        slides[prev].setAttribute('aria-hidden', 'true');
+        clearTimeout(leaveTimers[prev]);
+        leaveTimers[prev] = setTimeout(function () {
+          slides[prev].classList.remove('is-leaving');
+        }, FADE);
+
+        slides[n].classList.remove('is-leaving');
+        slides[n].classList.add('is-active');
+        slides[n].removeAttribute('aria-hidden');
+
+        segs.forEach(function (s, i) {
+          s.classList.toggle('is-active', i === n);
+          if (i === n) { s.setAttribute('aria-current', 'true'); }
+          else { s.removeAttribute('aria-current'); }
+        });
+
+        current = n;
+        restartTimer();
+      }
+
+      function restartSegFill() {
+        var seg = segs[current];
+        seg.classList.remove('is-active');
+        void seg.offsetWidth;
+        seg.classList.add('is-active');
+      }
+
+      function restartTimer() {
+        clearTimeout(timer);
+        restartSegFill();
+        if (playing && !document.hidden) {
+          timer = setTimeout(function () { go(current + 1); }, INTERVAL);
+        }
+      }
+
+      function setPlaying(value) {
+        playing = value;
+        hero.classList.toggle('is-paused', !playing);
+        toggleBtn.setAttribute('aria-label', playing ? 'Metti in pausa il carosello' : 'Riproduci il carosello');
+        if (playing) { restartTimer(); }
+        else { clearTimeout(timer); }
+      }
+
+      hero.addEventListener('click', function (e) {
+        var btn = e.target.closest('button');
+        if (!btn) { return; }
+        if (btn.dataset.action === 'prev') { go(current - 1); }
+        else if (btn.dataset.action === 'next') { go(current + 1); }
+        else if (btn.dataset.action === 'toggle') { setPlaying(!playing); }
+        else if (btn.classList.contains('seg')) { go(segs.indexOf(btn)); }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft') { go(current - 1); }
+        else if (e.key === 'ArrowRight') { go(current + 1); }
+      });
+
+      var touchX = null;
+      hero.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'touch') { touchX = e.clientX; }
+      });
+      hero.addEventListener('pointerup', function (e) {
+        if (e.pointerType !== 'touch' || touchX === null) { return; }
+        var dx = e.clientX - touchX;
+        touchX = null;
+        if (Math.abs(dx) > 45) { go(dx < 0 ? current + 1 : current - 1); }
+      });
+
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) { clearTimeout(timer); }
+        else if (playing) { restartTimer(); }
+      });
+
+      setPlaying(playing);
+    })();
+  </script>
 
 </body>
 </html>
