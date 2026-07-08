@@ -92,12 +92,20 @@
     }
     .panel h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem; }
 
+    /* 664px = la larghezza che il login aveva prima del layout a due colonne
+       (main a 760px, meno il suo padding): non stirarlo alla larghezza del
+       main allargato (1200px) sul breakpoint desktop. Il titolo si allinea
+       alla card solo in questa schermata (da loggato resta a piena larghezza,
+       sopra il form e la lista affiancati). */
+    #login-view { max-width: 664px; margin-inline: auto; }
+    main:has(> #login-view:not([hidden])) h1 { max-width: 664px; margin-inline: auto; }
+
     .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.1rem; }
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .field label, .field-label { font-size: 0.85rem; font-weight: 600; color: var(--text-dim); }
 
     input[type="text"], input[type="email"], input[type="password"],
-    input[type="date"], input[type="time"], input[type="url"], textarea {
+    input[type="date"], input[type="time"], input[type="url"], select {
       font: inherit;
       font-size: 0.95rem;
       color: var(--text);
@@ -107,8 +115,26 @@
       padding: 0.65rem 0.85rem;
       width: 100%;
     }
-    textarea { resize: vertical; min-height: 5rem; }
     input[type="file"] { font-size: 0.85rem; color: var(--text-dim); }
+    /* Il bottone nativo del file input non eredita alcuno stile: lo si allinea
+       ai .btn-ghost del resto del form, altrimenti stona sul tema scuro. */
+    input[type="file"]::file-selector-button {
+      font: inherit;
+      font-weight: 600;
+      font-size: 0.82rem;
+      margin-right: 0.75rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.2s var(--ease), border-color 0.2s var(--ease);
+    }
+    input[type="file"]::file-selector-button:hover {
+      background: var(--ink);
+      border-color: oklch(100% 0 0 / 0.6);
+    }
 
     /* Editor descrizione: toolbar + area editabile in un unico controllo bordato,
        cosi' si legge come un solo campo anche se sono due elementi separati. */
@@ -153,14 +179,78 @@
     }
     .rt-sep { width: 1px; height: 1.35rem; background: var(--line); margin: 0 0.2rem; flex: none; }
 
-    .rt-size-group { display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+    .rt-size-group { display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
     .rt-size-group button { border-radius: 0; width: auto; padding: 0 0.55rem; font-weight: 700; }
-    .rt-size-group button + button { border-left: 1px solid var(--line); }
+    .rt-size-group button:first-child { border-right: 1px solid var(--line); }
+    .rt-size-group button:last-child { border-left: 1px solid var(--line); }
+    .rt-size-input {
+      font: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      width: 3.4rem;
+      padding: 0 0.3rem;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      text-align: center;
+    }
+    .rt-size-input:focus { outline: none; background: var(--ink-2); }
+
+    /* Combobox custom (dimensione testo, luogo): il <datalist> nativo filtra le
+       opzioni sul valore già presente nel campo, quindi con un valore già scritto
+       (sempre il caso qui) al clic non mostra nulla — da qui il menu proprio,
+       appeso a <body> in position:fixed per uscire dagli overflow:hidden di
+       .field-rich e .rt-size-group. */
+    .combo-menu {
+      position: fixed;
+      z-index: 30;
+      background: var(--ink-2);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px oklch(0% 0 0 / 0.45);
+      max-height: 14rem;
+      overflow-y: auto;
+      padding: 0.3rem;
+    }
+    .combo-option {
+      padding: 0.55rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      color: var(--text);
+      cursor: pointer;
+      white-space: normal;
+    }
+    .combo-option:hover, .combo-option.is-active { background: oklch(75% 0.115 235 / 0.08); }
+    .combo-option[aria-selected="true"] { background: oklch(75% 0.115 235 / 0.16); color: var(--accent); }
+
+    #rt-size-menu.combo-menu { padding: 0.25rem; min-width: 3.4rem; }
+    #rt-size-menu .combo-option { padding: 0.4rem 0.5rem; font-size: 0.85rem; font-weight: 600; text-align: center; }
+
+    /* Freccia di affordance sul campo Luogo, stessa lettura visiva del <select>
+       "Testo/Pulsante" dei link: segnala "questo campo ha un menu" pur restando
+       testo libero. */
+    .combo-wrap { position: relative; }
+    .combo-wrap::after {
+      content: "";
+      position: absolute;
+      right: 0.85rem;
+      top: 50%;
+      width: 0.55em;
+      height: 0.55em;
+      border-right: 2px solid var(--text-dim);
+      border-bottom: 2px solid var(--text-dim);
+      transform: translateY(-70%) rotate(45deg);
+      pointer-events: none;
+    }
+    .combo-wrap input { padding-right: 2.25rem; }
 
     .rt-editor {
       min-height: 5rem;
       padding: 0.65rem 0.85rem;
-      font-size: 0.95rem;
+      /* 1rem = 16px: è la dimensione "normale" di default del testo. Tenendola a 16px
+         netti, il campo dimensione mostra 16 (non 15) quando non c'è uno span di
+         dimensione sulla selezione, e il WYSIWYG combacia col corpo del modal pubblico. */
+      font-size: 1rem;
       color: var(--text);
       outline: none;
     }
@@ -253,27 +343,72 @@
     .form-status { color: var(--accent); font-size: 0.9rem; margin-bottom: 1rem; }
     .muted { color: var(--text-dim); font-size: 0.9rem; }
 
-    .link-row { display: grid; grid-template-columns: 1fr 1.4fr auto; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .link-row { display: grid; grid-template-columns: 1fr 1.4fr auto auto; gap: 0.5rem; margin-bottom: 0.5rem; align-items: center; }
+    /* Stessa altezza dei due input di testo per tutti i controlli della riga:
+       select e bottone rimuovi hanno metriche interne diverse (line-height
+       nativa dei <select>, line-height:1 dei .btn-icon) che altrimenti li
+       farebbero risultare più bassi e disallineati. */
+    .link-row input, .link-row .link-style { height: 2.9375rem; }
+    .link-row .link-style { width: auto; padding: 0.5rem 2rem 0.5rem 0.6rem; font-size: 0.95rem; }
+    .link-row .remove-link-btn { width: 2.9375rem; height: 2.9375rem; padding: 0; display: grid; place-items: center; }
 
     .admin-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
     .admin-list-item {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-      padding: 0.85rem 1rem;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 0.9rem 1rem;
       border: 1px solid var(--line);
       border-radius: 10px;
       background: var(--ink);
+      transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
     }
-    .admin-list-info { display: flex; flex-direction: column; gap: 0.2rem; }
-    .admin-list-actions { display: flex; gap: 0.5rem; }
+    /* L'evento aperto nel form: stesso segnale di "selezione attiva" già usato
+       per la copertina della galleria foto (.photo-tile.is-cover). */
+    .admin-list-item.is-editing {
+      border-color: var(--accent);
+      background: oklch(75% 0.115 235 / 0.08);
+    }
+    .admin-list-main { display: flex; align-items: center; gap: 0.85rem; min-width: 0; }
+    .admin-list-thumb {
+      flex: none;
+      width: 64px;
+      aspect-ratio: 4 / 3;
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--ink-2);
+      display: grid;
+      place-items: center;
+    }
+    .admin-list-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .admin-list-thumb.is-placeholder img { width: 45%; height: 45%; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.5; }
+    .admin-list-info { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
+    .admin-list-info strong { font-size: 1.05rem; letter-spacing: -0.01em; }
+    .admin-list-info .muted { font-size: 0.85rem; }
+    .admin-list-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+
+    /* Lista eventi affiancata al form invece che sotto: con pochi eventi l'anno,
+       vederli senza scorrere tutto il form conta più di risparmiare una colonna. */
+    @media (min-width: 960px) {
+      main { max-width: 1200px; }
+      #app-view {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(360px, 460px);
+        align-items: start;
+        gap: 2rem;
+      }
+      #app-view > .panel { margin-top: 0; }
+      #events-list-panel {
+        position: sticky;
+        top: 1.5rem;
+        max-height: calc(100vh - 3rem);
+        overflow-y: auto;
+      }
+    }
 
     @media (max-width: 640px) {
       .field-row { grid-template-columns: 1fr; }
       .link-row { grid-template-columns: 1fr; }
-      .admin-list-item { flex-direction: column; align-items: stretch; }
     }
   </style>
 </head>
@@ -324,6 +459,11 @@
           </div>
 
           <div class="field">
+            <label for="event-subtitle">Sottotitolo <span class="muted">(facoltativo)</span></label>
+            <input id="event-subtitle" name="subtitle" type="text">
+          </div>
+
+          <div class="field">
             <span class="field-label" id="event-description-label">Descrizione</span>
             <div class="field-rich">
               <div class="rt-toolbar" role="toolbar" aria-label="Formattazione descrizione">
@@ -333,9 +473,9 @@
                 <button type="button" data-cmd="insertUnorderedList" aria-pressed="false" title="Elenco puntato" aria-label="Elenco puntato">•≡</button>
                 <span class="rt-sep" aria-hidden="true"></span>
                 <span class="rt-size-group">
-                  <button type="button" data-size="rt-small" aria-pressed="false" title="Testo piccolo" aria-label="Testo piccolo">A−</button>
-                  <button type="button" data-size="" aria-pressed="true" title="Testo normale" aria-label="Testo normale">A</button>
-                  <button type="button" data-size="rt-big" aria-pressed="false" title="Testo grande" aria-label="Testo grande">A+</button>
+                  <button type="button" data-size-delta="-2" title="Riduci dimensione testo" aria-label="Riduci dimensione testo">A−</button>
+                  <input type="text" inputmode="numeric" autocomplete="off" class="rt-size-input" id="rt-size-input" role="combobox" aria-expanded="false" aria-controls="rt-size-menu" aria-autocomplete="none" placeholder="16" title="Dimensione testo in pixel" aria-label="Dimensione testo in pixel">
+                  <button type="button" data-size-delta="2" title="Aumenta dimensione testo" aria-label="Aumenta dimensione testo">A+</button>
                 </span>
               </div>
               <div id="event-description" class="rt-editor" contenteditable="true" role="textbox"
@@ -357,7 +497,9 @@
 
           <div class="field">
             <label for="event-location">Luogo</label>
-            <input id="event-location" name="location" type="text">
+            <div class="combo-wrap">
+              <input id="event-location" name="location" type="text" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="location-menu" aria-autocomplete="none">
+            </div>
           </div>
 
           <div class="field">
@@ -383,7 +525,7 @@
         </form>
       </div>
 
-      <div class="panel">
+      <div class="panel" id="events-list-panel">
         <h2>Eventi caricati</h2>
         <p class="muted" id="events-list-status">Caricamento…</p>
         <ul class="admin-list" id="events-list"></ul>
@@ -407,8 +549,10 @@
     var formTitle = document.getElementById('form-title');
     var eventFormPanel = document.getElementById('event-form-panel');
     var titleInput = document.getElementById('event-title');
+    var subtitleInput = document.getElementById('event-subtitle');
     var descriptionEditor = document.getElementById('event-description');
     var rtToolbar = document.querySelector('.rt-toolbar');
+    var sizeInput = document.getElementById('rt-size-input');
     var dateInput = document.getElementById('event-date');
     var timeInput = document.getElementById('event-time');
     var locationInput = document.getElementById('event-location');
@@ -428,29 +572,226 @@
     // Galleria in lavorazione: ogni voce è { kind:'existing', url, path } oppure { kind:'new', file, url:objectURL }.
     var photoItems = [];
 
-    /* ---------- Editor descrizione (grassetto, corsivo, elenco, 3 dimensioni) ---------- */
+    /* ---------- Combobox custom (dimensione testo, luogo) ----------
+       Sostituisce i <datalist> nativi: in Chromium filtrano le opzioni sul valore
+       già presente nel campo, quindi con un valore già scritto (qui sempre il caso)
+       al clic non mostravano nulla. Il menu è appeso a <body> in position:fixed per
+       uscire dagli overflow:hidden di .field-rich/.rt-size-group; mostra sempre
+       tutte le opzioni e lascia comunque digitare testo libero. */
+    function setupCombobox(input, options, onPick, config) {
+      config = config || {};
+      var menuId = input.getAttribute('aria-controls');
+      var menu = document.createElement('div');
+      menu.className = 'combo-menu';
+      menu.id = menuId;
+      menu.setAttribute('role', 'listbox');
+      menu.hidden = true;
+      document.body.appendChild(menu);
+
+      var isOpen = false;
+      var activeIndex = -1;
+
+      function optionEls() { return Array.prototype.slice.call(menu.querySelectorAll('.combo-option')); }
+
+      function renderOptions() {
+        menu.innerHTML = '';
+        options.forEach(function (value, i) {
+          var el = document.createElement('div');
+          el.className = 'combo-option';
+          el.id = menuId + '-opt-' + i;
+          el.setAttribute('role', 'option');
+          el.textContent = String(value);
+          if (String(value) === input.value) el.setAttribute('aria-selected', 'true');
+          menu.appendChild(el);
+        });
+      }
+
+      function position() {
+        var r = input.getBoundingClientRect();
+        menu.style.left = r.left + 'px';
+        menu.style.top = (r.bottom + 4) + 'px';
+        if (config.matchWidth) menu.style.width = r.width + 'px';
+      }
+
+      function setActive(index) {
+        var els = optionEls();
+        if (!els.length) { activeIndex = -1; input.removeAttribute('aria-activedescendant'); return; }
+        activeIndex = (index + els.length) % els.length;
+        els.forEach(function (el, i) { el.classList.toggle('is-active', i === activeIndex); });
+        input.setAttribute('aria-activedescendant', els[activeIndex].id);
+        els[activeIndex].scrollIntoView({ block: 'nearest' });
+      }
+
+      function open() {
+        if (isOpen) return;
+        renderOptions();
+        position();
+        menu.hidden = false;
+        isOpen = true;
+        activeIndex = -1;
+        input.setAttribute('aria-expanded', 'true');
+        var selected = menu.querySelector('[aria-selected="true"]');
+        if (selected) selected.scrollIntoView({ block: 'nearest' });
+      }
+
+      function close() {
+        if (!isOpen) return;
+        menu.hidden = true;
+        isOpen = false;
+        activeIndex = -1;
+        input.setAttribute('aria-expanded', 'false');
+        input.removeAttribute('aria-activedescendant');
+      }
+
+      function pick(value) {
+        onPick(value);
+        close();
+      }
+
+      // Stesso guard della toolbar (mousedown -> preventDefault): un clic su
+      // un'opzione non deve rubare focus/selezione all'editor contenteditable.
+      menu.addEventListener('mousedown', function (e) { e.preventDefault(); });
+      menu.addEventListener('click', function (e) {
+        var el = e.target.closest('.combo-option');
+        if (!el) return;
+        pick(options[optionEls().indexOf(el)]);
+      });
+
+      input.addEventListener('mousedown', function () {
+        if (!isOpen) open();
+      });
+      input.addEventListener('blur', close);
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (!isOpen) open();
+          setActive(activeIndex + 1);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (!isOpen) open();
+          setActive(activeIndex - 1);
+        } else if (e.key === 'Escape' && isOpen) {
+          e.preventDefault();
+          close();
+        } else if (e.key === 'Enter' && isOpen && activeIndex >= 0) {
+          e.preventDefault();
+          e.stopImmediatePropagation(); // non far girare anche l'Enter-handler proprio del campo (es. dimensione testo)
+          pick(options[activeIndex]);
+        }
+      });
+
+      document.addEventListener('mousedown', function (e) {
+        if (isOpen && e.target !== input && !menu.contains(e.target)) close();
+      }, true);
+      window.addEventListener('resize', function () { if (isOpen) position(); });
+      window.addEventListener('scroll', function () { if (isOpen) close(); }, true);
+
+      return { close: close };
+    }
+
+    /* ---------- Editor descrizione (grassetto, corsivo, elenco, dimensione testo) ---------- */
 
     document.execCommand('defaultParagraphSeparator', false, 'p');
     document.execCommand('styleWithCSS', false, false);
 
     // execCommand('fontSize') è l'unico modo per applicare una dimensione via Selection;
     // usa il marcatore <font size="7"> (valore che nessun browser produce spontaneamente)
-    // per sostituirlo in modo deterministico con uno span.rt-small/rt-big, o rimuoverlo
-    // del tutto per tornare al testo "normale".
-    function applyFontSize(cls) {
+    // per sostituirlo in modo deterministico con uno span[style="font-size:Npx"].
+    // rt-small/rt-big restano solo per leggere le descrizioni salvate prima di questo
+    // cambio: da qui in avanti l'editor scrive esclusivamente dimensioni in px.
+    var SIZE_SPAN_SELECTOR = 'span.rt-small, span.rt-big, span[style*="font-size"]';
+    // Le classi legacy sono in em rispetto al corpo dell'editor (1rem = 16px):
+    // rt-small 0.85em ≈ 14px, rt-big 1.2em ≈ 19px. Servono solo a mostrare il valore
+    // giusto nel campo quando si seleziona testo salvato col vecchio sistema.
+    var LEGACY_SIZE_PX = { 'rt-small': 14, 'rt-big': 19 };
+    // L'ultima selezione fatta DENTRO l'editor: il campo numerico deve poter ricevere
+    // il focus per essere digitabile, quindi (a differenza dei bottoni, protetti dal
+    // mousedown qui sotto) ruba la selezione all'editor. Si ripristina da qui in
+    // applyFontSizePx ogni volta che il focus non è già sull'editor.
+    var savedEditorRange = null;
+
+    function isSizeSpan(el) {
+      return el.tagName === 'SPAN' && (el.classList.contains('rt-small') || el.classList.contains('rt-big') || (el.style && el.style.fontSize));
+    }
+
+    // Rimuove qualunque span di dimensione (nuovo o legacy) dentro E intorno al marker:
+    // execCommand a volte annida il <font> dentro uno span esistente invece di avvolgerlo.
+    function stripSizeMarkers(font) {
+      Array.prototype.forEach.call(font.querySelectorAll(SIZE_SPAN_SELECTOR), unwrapElement);
+      var ancestor = font.parentElement;
+      while (ancestor && ancestor !== descriptionEditor) {
+        var next = ancestor.parentElement;
+        if (isSizeSpan(ancestor)) unwrapElement(ancestor);
+        ancestor = next;
+      }
+    }
+
+    function restoreSelectionAround(nodes) {
+      if (!nodes.length) return;
+      var range = document.createRange();
+      range.setStartBefore(nodes[0]);
+      range.setEndAfter(nodes[nodes.length - 1]);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    // Se il focus è altrove (es. si sta digitando nel campo numerico), ripristina
+    // l'ultima selezione nota fatta nell'editor prima di leggerla o modificarla.
+    function ensureEditorSelection() {
+      if (document.activeElement !== descriptionEditor && savedEditorRange) {
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(savedEditorRange);
+      }
+    }
+
+    function applyFontSizePx(px) {
+      px = Math.max(6, Math.min(72, Math.round(px)));
+      ensureEditorSelection();
       descriptionEditor.focus();
       document.execCommand('fontSize', false, '7');
+      var produced = [];
       descriptionEditor.querySelectorAll('font[size="7"]').forEach(function (font) {
-        Array.prototype.forEach.call(font.querySelectorAll('span.rt-small, span.rt-big'), unwrapElement);
-        if (cls) {
-          var span = document.createElement('span');
-          span.className = cls;
-          while (font.firstChild) span.appendChild(font.firstChild);
-          font.replaceWith(span);
-        } else {
-          unwrapElement(font);
-        }
+        stripSizeMarkers(font);
+        var span = document.createElement('span');
+        span.style.fontSize = px + 'px';
+        while (font.firstChild) span.appendChild(font.firstChild);
+        font.replaceWith(span);
+        produced.push(span);
       });
+      restoreSelectionAround(produced);
+      sizeInput.value = px;
+    }
+
+    // Legge la dimensione della selezione corrente: dallo span che la avvolge se c'è,
+    // altrimenti dalla dimensione calcolata (ereditata) del testo intorno al cursore.
+    function currentSizePx() {
+      ensureEditorSelection();
+      var sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return null;
+      var range = sel.getRangeAt(0);
+      var node = range.startContainer;
+      var el;
+      if (node.nodeType === 1) {
+        var child = node.childNodes[range.startOffset];
+        el = (child && child.nodeType === 1) ? child : node;
+      } else {
+        el = node.parentElement;
+      }
+      if (!el || !descriptionEditor.contains(el)) return null;
+      var span = el.closest ? el.closest(SIZE_SPAN_SELECTOR) : null;
+      if (span) {
+        if (span.style && span.style.fontSize) {
+          var px = parseInt(span.style.fontSize, 10);
+          if (!isNaN(px)) return px;
+        }
+        if (span.classList.contains('rt-small')) return LEGACY_SIZE_PX['rt-small'];
+        if (span.classList.contains('rt-big')) return LEGACY_SIZE_PX['rt-big'];
+      }
+      var refEl = el.nodeType === 1 ? el : el.parentElement;
+      var computed = refEl ? parseFloat(getComputedStyle(refEl).fontSize) : NaN;
+      return isNaN(computed) ? 16 : Math.round(computed);
     }
 
     function syncToolbarState() {
@@ -460,18 +801,16 @@
         btn.setAttribute('aria-pressed', active ? 'true' : 'false');
       });
 
-      var sizeCls = '';
-      var sel = window.getSelection();
-      if (sel && sel.rangeCount) {
-        var node = sel.getRangeAt(0).startContainer;
-        var el = node.nodeType === 1 ? node : node.parentElement;
-        var span = el && el.closest ? el.closest('span.rt-small, span.rt-big') : null;
-        if (span && descriptionEditor.contains(span)) sizeCls = span.className;
-      }
-      Array.prototype.forEach.call(rtToolbar.querySelectorAll('[data-size]'), function (btn) {
-        btn.setAttribute('aria-pressed', btn.dataset.size === sizeCls ? 'true' : 'false');
-      });
+      var px = currentSizePx();
+      if (px != null && document.activeElement !== sizeInput) sizeInput.value = px;
     }
+
+    // Senza questo, il mousedown su un bottone della toolbar sposta il focus fuori
+    // dal contenteditable e il browser cancella la selezione prima che il click
+    // arrivi: bisognerebbe riselezionare il testo ad ogni formattazione.
+    rtToolbar.addEventListener('mousedown', function (e) {
+      if (e.target.closest('button')) e.preventDefault();
+    });
 
     rtToolbar.addEventListener('click', function (e) {
       var btn = e.target.closest('button');
@@ -479,15 +818,48 @@
       if (btn.dataset.cmd) {
         descriptionEditor.focus();
         document.execCommand(btn.dataset.cmd);
-      } else if (btn.dataset.size !== undefined) {
-        applyFontSize(btn.dataset.size);
+        syncToolbarState();
+      } else if (btn.dataset.sizeDelta !== undefined) {
+        var base = currentSizePx();
+        applyFontSizePx((base == null ? 16 : base) + parseInt(btn.dataset.sizeDelta, 10));
+        syncToolbarState();
       }
-      syncToolbarState();
     });
 
     document.addEventListener('selectionchange', function () {
-      if (document.activeElement === descriptionEditor) syncToolbarState();
+      if (document.activeElement === descriptionEditor) {
+        savedEditorRange = window.getSelection().getRangeAt(0).cloneRange();
+        syncToolbarState();
+      }
     });
+
+    var SIZE_PRESETS = [10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 40, 44, 48];
+    var sizeCombo = setupCombobox(sizeInput, SIZE_PRESETS, function (px) {
+      applyFontSizePx(px);
+      syncToolbarState();
+    });
+
+    var LOCATION_PRESETS = [
+      'Parco al Poz - Preore, Tre Ville (TN)',
+      'Provaiolo - Preore, Tre Ville (TN)',
+      'Piazza F. Serafini - Preore, Tre Ville (TN)'
+    ];
+    setupCombobox(locationInput, LOCATION_PRESETS, function (value) {
+      locationInput.value = value;
+    }, { matchWidth: true });
+
+    function applySizeFromInput() {
+      var value = parseInt(sizeInput.value, 10);
+      sizeCombo.close();
+      if (isNaN(value)) { syncToolbarState(); return; }
+      applyFontSizePx(value);
+    }
+    sizeInput.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter') return;
+      e.preventDefault(); // altrimenti invierebbe il form (event-form)
+      applySizeFromInput();
+    });
+    sizeInput.addEventListener('change', applySizeFromInput);
 
     // Incolla come testo semplice: tiene fuori il markup di Word/Google Docs,
     // così il sanitizer al salvataggio non deve fare quasi nulla.
@@ -497,18 +869,40 @@
       document.execCommand('insertText', false, text);
     });
 
+    // Tab rientra il testo invece di uscire dal campo: dentro un elenco annida/de-annida
+    // il punto, altrimenti inserisce un rientro. Shift+Tab fuori da un elenco resta la via
+    // di fuga nativa verso il campo precedente, per chi naviga solo da tastiera.
+    descriptionEditor.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab') return;
+      var sel = window.getSelection();
+      var node = sel && sel.rangeCount ? sel.getRangeAt(0).startContainer : null;
+      var el = node && node.nodeType === 1 ? node : (node && node.parentElement);
+      var listItem = el && el.closest ? el.closest('li') : null;
+      if (listItem && descriptionEditor.contains(listItem)) {
+        e.preventDefault();
+        document.execCommand(e.shiftKey ? 'outdent' : 'indent');
+      } else if (!e.shiftKey) {
+        e.preventDefault();
+        document.execCommand('insertText', false, '    ');
+      }
+    });
+
     function escapeHtml(str) {
       return String(str).replace(/[&<>"']/g, function (c) {
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
       });
     }
 
-    function addLinkRow(label, url) {
+    function addLinkRow(label, url, style) {
       var row = document.createElement('div');
       row.className = 'link-row';
       row.innerHTML =
         '<input type="text" class="link-label" placeholder="Etichetta (es. Facebook)" value="' + escapeHtml(label || '') + '">' +
         '<input type="url" class="link-url" placeholder="https://…" value="' + escapeHtml(url || '') + '">' +
+        '<select class="link-style" aria-label="Aspetto del link">' +
+        '<option value="link"' + (style === 'button' ? '' : ' selected') + '>Testo</option>' +
+        '<option value="button"' + (style === 'button' ? ' selected' : '') + '>Pulsante</option>' +
+        '</select>' +
         '<button type="button" class="btn btn-ghost btn-icon remove-link-btn" aria-label="Rimuovi link">✕</button>';
       row.querySelector('.remove-link-btn').addEventListener('click', function () { row.remove(); });
       linksRows.appendChild(row);
@@ -583,12 +977,15 @@
       photoInput.value = '';
       cancelEditBtn.hidden = true;
       eventError.hidden = true;
+      highlightEditingRow();
     }
 
     function startEdit(ev) {
       editingEvent = ev;
+      highlightEditingRow();
       formTitle.textContent = 'Modifica evento';
       titleInput.value = ev.title || '';
+      subtitleInput.value = ev.subtitle || '';
       descriptionEditor.innerHTML = isRichText(ev.description)
         ? sanitizeRichText(ev.description)
         : plainToRichHtml(ev.description);
@@ -599,7 +996,7 @@
       linksRows.innerHTML = '';
       var links = Array.isArray(ev.links) ? ev.links : [];
       if (links.length) {
-        links.forEach(function (l) { addLinkRow(l.label, l.url); });
+        links.forEach(function (l) { addLinkRow(l.label, l.url, l.style); });
       } else {
         addLinkRow();
       }
@@ -689,10 +1086,25 @@
         eventsList.innerHTML = '';
         data.forEach(function (ev) {
           var li = document.createElement('li');
-          li.className = 'admin-list-item';
-          var meta = fmtDate(ev.event_date) + (ev.start_time ? ' · ' + fmtTime(ev.start_time) : '');
+          li.className = 'admin-list-item' + (editingEvent && editingEvent.id === ev.id ? ' is-editing' : '');
+          li.dataset.id = ev.id;
+
+          var photos = getPhotos(ev);
+          var meta = [
+            fmtDate(ev.event_date),
+            ev.start_time ? fmtTime(ev.start_time) : '',
+            ev.location,
+            photos.length > 1 ? photos.length + ' foto' : ''
+          ].filter(Boolean).join(' · ');
+
+          var thumbHtml = photos.length
+            ? '<div class="admin-list-thumb"><img src="' + escapeHtml(photos[0].url) + '" alt=""></div>'
+            : '<div class="admin-list-thumb is-placeholder"><img src="../assets/logo-small.png" width="256" height="256" alt=""></div>';
+
           li.innerHTML =
+            '<div class="admin-list-main">' + thumbHtml +
             '<div class="admin-list-info"><strong>' + escapeHtml(ev.title) + '</strong><span class="muted">' + escapeHtml(meta) + '</span></div>' +
+            '</div>' +
             '<div class="admin-list-actions"><button type="button" class="btn btn-ghost edit-btn">Modifica</button><button type="button" class="btn btn-danger delete-btn">Elimina</button></div>';
           li.querySelector('.edit-btn').addEventListener('click', function () { startEdit(ev); });
           li.querySelector('.delete-btn').addEventListener('click', function () { handleDelete(ev); });
@@ -702,6 +1114,14 @@
         eventsListStatus.hidden = false;
         eventsListStatus.textContent = 'Errore nel caricamento degli eventi.';
       }
+    }
+
+    // Aggiorna l'evidenziazione dell'evento in modifica senza ricaricare la lista
+    // dal server: usata da startEdit/resetForm per un riscontro visivo immediato.
+    function highlightEditingRow() {
+      Array.prototype.forEach.call(eventsList.querySelectorAll('.admin-list-item'), function (li) {
+        li.classList.toggle('is-editing', !!editingEvent && li.dataset.id === editingEvent.id);
+      });
     }
 
     // Traccia lo stato mostrato: onAuthStateChange scatta anche su TOKEN_REFRESHED e
@@ -741,6 +1161,7 @@
 
       try {
         var title = titleInput.value.trim();
+        var subtitle = subtitleInput.value.trim();
         var description = sanitizeRichText(descriptionEditor.innerHTML);
         if (!richTextToPlain(description)) description = '';
         var eventDate = dateInput.value;
@@ -752,7 +1173,8 @@
         var links = Array.prototype.slice.call(linksRows.querySelectorAll('.link-row')).map(function (row) {
           return {
             label: row.querySelector('.link-label').value.trim(),
-            url: row.querySelector('.link-url').value.trim()
+            url: row.querySelector('.link-url').value.trim(),
+            style: row.querySelector('.link-style').value === 'button' ? 'button' : 'link'
           };
         }).filter(function (l) { return l.url; });
 
@@ -783,6 +1205,7 @@
 
         var payload = {
           title: title,
+          subtitle: subtitle || null,
           description: description,
           event_date: eventDate,
           start_time: startTime,
@@ -833,8 +1256,6 @@
     logoutBtn.addEventListener('click', async function () {
       await supabase.auth.signOut();
     });
-
-    addLinkRow();
 
     if (!isConfigured) {
       configWarning.hidden = false;

@@ -4,8 +4,8 @@
 // La home pubblica non carica il vendor script: legge gli eventi con fetchEvents()
 // (REST diretta) per evitare 200+ KB di libreria inutilizzati su una sola SELECT anonima.
 
-export const SUPABASE_URL = "https://tnxkxgaczwkkkrdiusdz.supabase.co";
-export const SUPABASE_ANON_KEY = "sb_publishable_zWkm_KntqYVSMOHoS73KHA_n7_283Vm";
+const SUPABASE_URL = "https://tnxkxgaczwkkkrdiusdz.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_zWkm_KntqYVSMOHoS73KHA_n7_283Vm";
 
 // Diventa true solo dopo aver sostituito le due costanti sopra con i valori reali del progetto Supabase.
 export const isConfigured = !SUPABASE_URL.includes("YOUR-PROJECT") && !SUPABASE_ANON_KEY.includes("YOUR-ANON-KEY");
@@ -33,10 +33,11 @@ export function fmtDate(dateStr) {
 export function fmtDateShort(dateStr) {
   if (!dateStr) return "";
   const d = new Date(dateStr + "T00:00:00");
-  const parts = new Intl.DateTimeFormat("it-IT", { day: "2-digit", month: "short" }).formatToParts(d);
+  const parts = new Intl.DateTimeFormat("it-IT", { weekday: "short", day: "2-digit", month: "short" }).formatToParts(d);
   const day = parts.find(p => p.type === "day").value;
   const month = parts.find(p => p.type === "month").value.replace(".", "");
-  return { day, month };
+  const weekday = parts.find(p => p.type === "weekday").value.replace(".", "");
+  return { day, month, weekday };
 }
 
 export function fmtTime(timeStr) {

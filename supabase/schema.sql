@@ -5,6 +5,7 @@ create table public.events (
   id          uuid primary key default gen_random_uuid(),
   created_at  timestamptz not null default now(),
   title       text not null,
+  subtitle    text,
   description text,
   event_date  date not null,
   start_time  time,
@@ -64,3 +65,9 @@ create policy "event photos delete" on storage.objects
 -- update public.events
 --   set photos = jsonb_build_array(jsonb_build_object('url', photo_url, 'path', photo_path))
 --   where photo_url is not null and photos = '[]'::jsonb;
+
+-- ---------------------------------------------------------------------------
+-- MIGRAZIONE: aggiunge il sottotitolo facoltativo dell'evento (colonna nuova,
+-- nullable). Esegui una tantum nel SQL Editor; è idempotente.
+-- ---------------------------------------------------------------------------
+-- alter table public.events add column if not exists subtitle text;
