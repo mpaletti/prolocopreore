@@ -5,14 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sito ufficiale dell'Associazione Pro Loco di Preore APS — comunità, tradizione e divertimento a Preore, Tre Ville (TN)">
   <meta name="theme-color" content="#171a20">
-  <meta property="og:title" content="Pro Loco Preore APS">
+  <link rel="canonical" href="https://prolocopreore.it/">
+  <meta property="og:title" content="Pro Loco di Preore APS">
   <meta property="og:description" content="Comunità, tradizione e divertimento a Preore — Tre Ville, Trentino.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://prolocopreore.it">
-  <meta property="og:image" content="https://prolocopreore.it/assets/pozfest-01-tavoli.jpg">
+  <meta property="og:url" content="https://prolocopreore.it/">
+  <meta property="og:site_name" content="Pro Loco di Preore APS">
+  <meta property="og:locale" content="it_IT">
+  <meta property="og:image" content="https://prolocopreore.it/assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Un momento della Sagra di Santa Maria Maddalena organizzata dalla Pro Loco di Preore">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon-96.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preconnect" href="https://tnxkxgaczwkkkrdiusdz.supabase.co" crossorigin>
   <title>Pro Loco di Preore APS</title>
   <script>document.documentElement.classList.remove('no-js');</script>
   <script type="application/ld+json">
@@ -21,7 +29,7 @@
     "@type": "Organization",
     "name": "Associazione Pro Loco di Preore APS",
     "url": "https://prolocopreore.it",
-    "logo": "https://prolocopreore.it/assets/logo.svg",
+    "logo": "https://prolocopreore.it/assets/logo-512.png",
     "email": "prolocopreore@hotmail.com",
     "sameAs": [
       "https://www.instagram.com/prolocopreore",
@@ -94,6 +102,14 @@
 
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    /* Link "in prosa" su testo attenuato: l'underline li rende distinguibili
+       anche senza affidarsi solo al colore (WCAG 1.4.1). */
+    .footer-grid a, .footer-bottom a, .events-status a, .events-empty a,
+    .event-modal-links a, noscript a {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
 
     :focus-visible {
       outline: 2px solid var(--accent);
@@ -185,7 +201,6 @@
     }
 
     .slides {
-      list-style: none;
       position: absolute;
       inset: 0;
       z-index: var(--z-slides);
@@ -529,9 +544,11 @@
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1.75rem;
     }
+    .events-grid > li { display: flex; }
 
     .event-card {
       display: flex;
+      flex: 1 1 auto;
       flex-direction: column;
       background: var(--ink-2);
       border: 1px solid var(--line);
@@ -793,7 +810,12 @@
       letter-spacing: -0.02em;
     }
     .event-modal-meta { font-size: 0.9rem; color: var(--text-dim); }
-    .event-modal-desc { white-space: pre-wrap; max-width: 68ch; }
+    .event-modal-desc { max-width: 68ch; }
+    .event-modal-desc.is-plain { white-space: pre-wrap; }
+    .event-modal-desc p + p, .event-modal-desc ul { margin-top: 0.6em; }
+    .event-modal-desc ul { padding-left: 1.4em; }
+    .rt-small { font-size: 0.85em; }
+    .rt-big { font-size: 1.2em; }
     .event-modal-links {
       list-style: none;
       display: flex;
@@ -863,7 +885,7 @@
 
   <header class="site-header">
     <a class="brand" href="/" aria-label="Pro Loco di Preore — pagina iniziale">
-      <img src="assets/logo.svg" alt="">
+      <img src="assets/logo-small.png" width="256" height="256" alt="">
       <span>Pro Loco Preore</span>
     </a>
     <a class="header-link" href="#eventi">Eventi</a>
@@ -871,41 +893,41 @@
 
   <main>
     <section class="hero" id="carosello" aria-roledescription="carosello" aria-label="Fotografie dagli eventi della Pro Loco">
-      <ul class="slides">
-        <li class="slide is-active" role="group" aria-roledescription="diapositiva" aria-label="1 di 11">
-          <img src="assets/pozfest-01-tavoli.jpg" alt="I tavoli della festa al tramonto tra i gazebo della Pro Loco e i filari di luci, con le montagne sullo sfondo" fetchpriority="high" decoding="async">
-        </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="2 di 11" aria-hidden="true">
-          <img src="assets/pozfest-08-costine.jpg" alt="Costine alla griglia con patatine su un vassoio giallo" loading="lazy" decoding="async">
-        </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="3 di 11" aria-hidden="true">
-          <img src="assets/pozfest-03-dj.jpg" alt="Il dj alla console del POZFEST tra i fasci di luce blu, davanti al pubblico che balla" loading="lazy" decoding="async">
-        </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="4 di 11" aria-hidden="true">
-          <img src="assets/pozfest-04-burger.jpg" alt="Panino con pulled pork e patatine appena serviti dalla cucina del festival" loading="lazy" decoding="async">
-        </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="5 di 11" aria-hidden="true">
-          <img src="assets/pozfest-11-parco.jpg" alt="Il Parco al Poz di sera: tendoni illuminati, filari di luci e il pubblico ai tavoli" loading="lazy" decoding="async">
-        </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="6 di 11" aria-hidden="true">
-          <img src="assets/pozfest-06-panino.jpg" alt="Primo piano di un panino al pulled pork con insalata su un vassoio giallo" loading="lazy" decoding="async">
-        </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="7 di 11" aria-hidden="true">
-          <img src="assets/pozfest-12-palco.jpg" alt="Il pubblico davanti al palco sotto il tendone, in bianco e nero, nel controluce dei riflettori" loading="lazy" decoding="async">
-        </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="8 di 11" aria-hidden="true">
-          <img src="assets/pozfest-02-griglia.jpg" alt="In cucina al POZFEST: un volontario alla griglia piena di hamburger" loading="lazy" decoding="async">
-        </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="9 di 11" aria-hidden="true">
-          <img src="assets/pozfest-10-volontari.jpg" alt="Un giovane volontario porta ai tavoli tre vassoi con panini e patatine" loading="lazy" decoding="async">
-        </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="10 di 11" aria-hidden="true">
-          <img src="assets/pozfest-05-tendoni.jpg" alt="La festa serale tra i tendoni e i filari di luci del Parco al Poz" loading="lazy" decoding="async">
-        </li>
-        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="11 di 11" aria-hidden="true">
-          <img src="assets/pozfest-07-pozparty.jpg" alt="Il pubblico del POZ Party sotto il tendone illuminato di verde" loading="lazy" decoding="async">
-        </li>
-      </ul>
+      <div class="slides">
+        <div class="slide is-active" role="group" aria-roledescription="diapositiva" aria-label="1 di 11">
+          <img src="assets/pozfest-01-tavoli.webp" width="1600" height="1065" alt="I tavoli della festa al tramonto tra i gazebo della Pro Loco e i filari di luci, con le montagne sullo sfondo" fetchpriority="high" decoding="async">
+        </div>
+        <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="2 di 11" aria-hidden="true">
+          <img src="assets/pozfest-08-costine.webp" width="1600" height="1066" alt="Costine alla griglia con patatine su un vassoio giallo" loading="lazy" decoding="async">
+        </div>
+        <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="3 di 11" aria-hidden="true">
+          <img src="assets/pozfest-03-dj.webp" width="1600" height="1065" alt="Il dj alla console del POZFEST tra i fasci di luce blu, davanti al pubblico che balla" loading="lazy" decoding="async">
+        </div>
+        <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="4 di 11" aria-hidden="true">
+          <img src="assets/pozfest-04-burger.webp" width="1600" height="1066" alt="Panino con pulled pork e patatine appena serviti dalla cucina del festival" loading="lazy" decoding="async">
+        </div>
+        <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="5 di 11" aria-hidden="true">
+          <img src="assets/pozfest-11-parco.webp" width="1600" height="1066" alt="Il Parco al Poz di sera: tendoni illuminati, filari di luci e il pubblico ai tavoli" loading="lazy" decoding="async">
+        </div>
+        <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="6 di 11" aria-hidden="true">
+          <img src="assets/pozfest-06-panino.webp" width="1600" height="1065" alt="Primo piano di un panino al pulled pork con insalata su un vassoio giallo" loading="lazy" decoding="async">
+        </div>
+        <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="7 di 11" aria-hidden="true">
+          <img src="assets/pozfest-12-palco.webp" width="1600" height="1065" alt="Il pubblico davanti al palco sotto il tendone, in bianco e nero, nel controluce dei riflettori" loading="lazy" decoding="async">
+        </div>
+        <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="8 di 11" aria-hidden="true">
+          <img src="assets/pozfest-02-griglia.webp" width="1600" height="1065" alt="In cucina al POZFEST: un volontario alla griglia piena di hamburger" loading="lazy" decoding="async">
+        </div>
+        <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="9 di 11" aria-hidden="true">
+          <img src="assets/pozfest-10-volontari.webp" width="1600" height="1066" alt="Un giovane volontario porta ai tavoli tre vassoi con panini e patatine" loading="lazy" decoding="async">
+        </div>
+        <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="10 di 11" aria-hidden="true">
+          <img src="assets/pozfest-05-tendoni.webp" width="1600" height="1065" alt="La festa serale tra i tendoni e i filari di luci del Parco al Poz" loading="lazy" decoding="async">
+        </div>
+        <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="11 di 11" aria-hidden="true">
+          <img src="assets/pozfest-07-pozparty.webp" width="1600" height="1065" alt="Il pubblico del POZ Party sotto il tendone illuminato di verde" loading="lazy" decoding="async">
+        </div>
+      </div>
 
       <div class="scrim scrim-top" aria-hidden="true"></div>
       <div class="scrim scrim-bottom" aria-hidden="true"></div>
@@ -973,7 +995,7 @@
 
   <footer class="site-footer" id="contatti">
     <div class="footer-head">
-      <img src="assets/logo.svg" alt="">
+      <img src="assets/logo-small.png" width="256" height="256" alt="">
       <div>
         <p class="name">Associazione Pro Loco di Preore APS</p>
         <p class="sub">Associazione di promozione sociale · Preore, Tre Ville (TN)</p>
@@ -1138,15 +1160,15 @@
       <div class="event-modal-body">
         <h3 id="modal-title"></h3>
         <p class="event-modal-meta"></p>
-        <p class="event-modal-desc"></p>
+        <div class="event-modal-desc"></div>
         <ul class="event-modal-links" hidden></ul>
       </div>
     </div>
   </div>
 
-  <script src="assets/vendor/supabase.min.js"></script>
   <script type="module">
-    import { supabase, isConfigured, fmtDate, fmtDateShort, fmtTime, todayISO, getPhotos } from './assets/supabase.js';
+    import { isConfigured, fetchEvents, fmtDate, fmtDateShort, fmtTime, todayISO, getPhotos } from './assets/supabase.js';
+    import { sanitizeRichText, isRichText, richTextToPlain } from './assets/richtext.js';
 
     var status = document.querySelector('.events-status');
     var upcomingList = document.querySelector('[data-group="prossimi"] .events-grid');
@@ -1175,7 +1197,7 @@
 
       var photoHtml = cover
         ? '<div class="event-photo"><img src="' + escapeHtml(cover) + '" alt="" loading="lazy" decoding="async">'
-        : '<div class="event-photo is-placeholder"><img src="assets/logo.svg" alt="" loading="lazy">';
+        : '<div class="event-photo is-placeholder"><img src="assets/logo-small.png" width="256" height="256" alt="" loading="lazy">';
       photoHtml += '<span class="event-date-badge"><strong>' + badge.day + '</strong><span>' + badge.month + '</span></span>';
       if (!compact && photos.length > 1) {
         photoHtml += '<span class="event-photo-count" aria-hidden="true">' + MULTI_ICON + photos.length + '</span>';
@@ -1183,13 +1205,14 @@
       photoHtml += '</div>';
 
       var metaHtml = meta ? '<p class="event-meta">' + escapeHtml(meta) + '</p>' : '';
-      var descHtml = (!compact && ev.description) ? '<p class="event-desc">' + escapeHtml(ev.description) + '</p>' : '';
+      var descText = isRichText(ev.description) ? richTextToPlain(ev.description) : ev.description;
+      var descHtml = (!compact && descText) ? '<p class="event-desc">' + escapeHtml(descText) + '</p>' : '';
       var moreHtml = compact ? '' : '<span class="event-more" aria-hidden="true">Dettagli →</span>';
 
-      return '<li class="event-card' + (compact ? ' event-card--compact' : '') + '"' +
+      return '<li><div class="event-card' + (compact ? ' event-card--compact' : '') + '"' +
         ' data-id="' + escapeHtml(ev.id) + '" role="button" tabindex="0"' +
         ' aria-label="Apri i dettagli dell\'evento: ' + escapeHtml(ev.title) + '">' + photoHtml +
-        '<div class="event-body"><h4>' + escapeHtml(ev.title) + '</h4>' + metaHtml + descHtml + moreHtml + '</div></li>';
+        '<div class="event-body"><h4>' + escapeHtml(ev.title) + '</h4>' + metaHtml + descHtml + moreHtml + '</div></div></li>';
     }
 
     /* ---------- Modale di dettaglio ---------- */
@@ -1246,7 +1269,13 @@
       modalTitle.textContent = ev.title || '';
       modalMeta.textContent = [fmtDate(ev.event_date), fmtTime(ev.start_time), ev.location].filter(Boolean).join(' · ');
 
-      modalDesc.textContent = ev.description || '';
+      if (isRichText(ev.description)) {
+        modalDesc.classList.remove('is-plain');
+        modalDesc.innerHTML = sanitizeRichText(ev.description);
+      } else {
+        modalDesc.classList.add('is-plain');
+        modalDesc.textContent = ev.description || '';
+      }
       modalDesc.hidden = !ev.description;
 
       var links = Array.isArray(ev.links) ? ev.links : [];
@@ -1328,9 +1357,7 @@
       }
 
       try {
-        var res = await supabase.from('events').select('*').order('event_date', { ascending: true });
-        if (res.error) { throw res.error; }
-        var data = res.data || [];
+        var data = await fetchEvents();
 
         eventsById = {};
         data.forEach(function (e) { eventsById[e.id] = e; });

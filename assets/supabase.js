@@ -1,15 +1,28 @@
 // Client Supabase condiviso da index.html e management/index.html.
-// Richiede window.supabase (vendored in assets/vendor/supabase.min.js) caricato prima di questo modulo.
+// Il client completo (supabase-js) serve solo a management/index.html, che carica
+// assets/vendor/supabase.min.js prima di questo modulo per auth/storage/scrittura.
+// La home pubblica non carica il vendor script: legge gli eventi con fetchEvents()
+// (REST diretta) per evitare 200+ KB di libreria inutilizzati su una sola SELECT anonima.
 
-const SUPABASE_URL = "https://tnxkxgaczwkkkrdiusdz.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_zWkm_KntqYVSMOHoS73KHA_n7_283Vm";
+export const SUPABASE_URL = "https://tnxkxgaczwkkkrdiusdz.supabase.co";
+export const SUPABASE_ANON_KEY = "sb_publishable_zWkm_KntqYVSMOHoS73KHA_n7_283Vm";
 
 // Diventa true solo dopo aver sostituito le due costanti sopra con i valori reali del progetto Supabase.
 export const isConfigured = !SUPABASE_URL.includes("YOUR-PROJECT") && !SUPABASE_ANON_KEY.includes("YOUR-ANON-KEY");
 
-export const supabase = isConfigured
+export const supabase = (isConfigured && window.supabase)
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
+
+// Lettura pubblica degli eventi via REST diretta (PostgREST), senza supabase-js.
+export async function fetchEvents() {
+  const res = await fetch(
+    SUPABASE_URL + "/rest/v1/events?select=*&order=event_date.asc",
+    { headers: { apikey: SUPABASE_ANON_KEY } }
+  );
+  if (!res.ok) throw new Error("Richiesta eventi fallita (" + res.status + ")");
+  return res.json();
+}
 
 export function fmtDate(dateStr) {
   if (!dateStr) return "";

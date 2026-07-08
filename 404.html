@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Pagina non trovata — Pro Loco di Preore APS">
+  <meta name="theme-color" content="#171a20">
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon-96.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <title>Pagina non trovata — Pro Loco di Preore APS</title>
+  <style>
+    @font-face {
+      font-family: "Bricolage Grotesque";
+      font-style: normal;
+      font-weight: 400 800;
+      font-stretch: 100%;
+      font-display: swap;
+      src: url("assets/fonts/bricolage-grotesque-latin.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: "Bricolage Grotesque";
+      font-style: normal;
+      font-weight: 400 800;
+      font-stretch: 100%;
+      font-display: swap;
+      src: url("assets/fonts/bricolage-grotesque-latin-ext.woff2") format("woff2");
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+
+    :root {
+      --ink: oklch(16% 0.012 255);
+      --ink-2: oklch(21% 0.014 255);
+      --line: oklch(32% 0.015 255);
+      --text: oklch(96% 0.004 250);
+      --text-dim: oklch(76% 0.012 252);
+      --accent: oklch(75% 0.115 235);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --pad: clamp(1.25rem, 4vw, 3rem);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: "Bricolage Grotesque", system-ui, sans-serif;
+      background: var(--ink);
+      color: var(--text);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    ::selection { background: var(--accent); color: var(--ink); }
+
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      padding: clamp(1rem, 2.5vw, 1.75rem) var(--pad);
+    }
+    .brand { display: flex; align-items: center; gap: 0.9rem; color: var(--text); }
+    .brand img { width: clamp(48px, 6vw, 62px); height: auto; filter: brightness(0) invert(1); }
+    .brand span { font-size: 0.95rem; font-weight: 600; letter-spacing: 0.01em; }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      max-width: 46ch;
+      margin: 0 auto;
+      padding: clamp(2rem, 6vw, 4rem) var(--pad);
+    }
+
+    .code {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    h1 {
+      margin-top: 0.75rem;
+      font-size: clamp(1.9rem, 5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+    }
+
+    p {
+      margin-top: 1rem;
+      color: var(--text-dim);
+      text-wrap: pretty;
+    }
+
+    .btn-home {
+      display: inline-block;
+      margin-top: 2rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.75rem 1.6rem;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--ink);
+      transition: background 0.2s var(--ease);
+    }
+    .btn-home:hover {
+      text-decoration: none;
+      background: oklch(75% 0.115 235 / 0.85);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Pro Loco di Preore — pagina iniziale">
+      <img src="assets/logo-small.png" width="256" height="256" alt="">
+      <span>Pro Loco Preore</span>
+    </a>
+  </header>
+
+  <main>
+    <p class="code">Errore 404</p>
+    <h1>Questa pagina non esiste</h1>
+    <p>Il link seguito potrebbe essere scaduto o digitato male. Trovi gli eventi in programma e tutte le informazioni sull'associazione nella pagina principale.</p>
+    <a class="btn-home" href="/">Torna alla home</a>
+  </main>
+
+</body>
+</html>

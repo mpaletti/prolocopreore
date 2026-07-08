@@ -6,7 +6,9 @@
   <meta name="description" content="Informativa sulla privacy del sito prolocopreore.it — Associazione Pro Loco di Preore APS">
   <meta name="theme-color" content="#171a20">
   <meta name="robots" content="noindex">
-  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon-96.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="canonical" href="https://prolocopreore.it/privacy.html">
   <title>Privacy — Pro Loco di Preore APS</title>
   <style>
     @font-face {
@@ -50,6 +52,13 @@
 
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    /* Link "in prosa": l'underline li rende distinguibili anche senza
+       affidarsi solo al colore (WCAG 1.4.1). */
+    main a, .site-footer a {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
 
     :focus-visible {
       outline: 2px solid var(--accent);
@@ -151,7 +160,7 @@
 
   <header class="site-header">
     <a class="brand" href="/" aria-label="Pro Loco di Preore — pagina iniziale">
-      <img src="assets/logo.svg" alt="">
+      <img src="assets/logo-small.png" width="256" height="256" alt="">
       <span>Pro Loco Preore</span>
     </a>
     <a class="header-link" href="/">Torna al sito</a>

@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+  <link rel="icon" type="image/png" sizes="96x96" href="../assets/favicon-96.png">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
   <title>Gestione eventi — Pro Loco di Preore APS</title>
   <style>
     @font-face {
@@ -108,6 +109,67 @@
     }
     textarea { resize: vertical; min-height: 5rem; }
     input[type="file"] { font-size: 0.85rem; color: var(--text-dim); }
+
+    /* Editor descrizione: toolbar + area editabile in un unico controllo bordato,
+       cosi' si legge come un solo campo anche se sono due elementi separati. */
+    .field-rich {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--ink);
+      overflow: hidden;
+      transition: border-color 0.2s var(--ease);
+    }
+    .field-rich:focus-within { border-color: var(--accent); }
+
+    .rt-toolbar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.15rem;
+      padding: 0.35rem;
+      background: var(--ink-2);
+      border-bottom: 1px solid var(--line);
+    }
+    .rt-toolbar button {
+      font: inherit;
+      font-size: 0.85rem;
+      line-height: 1;
+      color: var(--text-dim);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      width: 1.85rem;
+      height: 1.85rem;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: background 0.15s var(--ease), color 0.15s var(--ease), border-color 0.15s var(--ease);
+    }
+    .rt-toolbar button:hover { background: var(--ink); color: var(--text); }
+    .rt-toolbar button[aria-pressed="true"] {
+      background: oklch(75% 0.115 235 / 0.16);
+      color: var(--accent);
+      border-color: oklch(75% 0.115 235 / 0.4);
+    }
+    .rt-sep { width: 1px; height: 1.35rem; background: var(--line); margin: 0 0.2rem; flex: none; }
+
+    .rt-size-group { display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+    .rt-size-group button { border-radius: 0; width: auto; padding: 0 0.55rem; font-weight: 700; }
+    .rt-size-group button + button { border-left: 1px solid var(--line); }
+
+    .rt-editor {
+      min-height: 5rem;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+    }
+    .rt-editor:focus-visible { box-shadow: inset 0 0 0 2px var(--accent); }
+    .rt-editor:empty::before { content: attr(data-placeholder); color: var(--text-dim); }
+    .rt-editor p + p, .rt-editor ul { margin-top: 0.5em; }
+    .rt-editor ul { padding-left: 1.4em; }
+    .rt-small { font-size: 0.85em; }
+    .rt-big { font-size: 1.2em; }
 
     .photos-preview {
       display: grid;
@@ -219,7 +281,7 @@
 
   <header class="site-header">
     <a class="brand" href="../" aria-label="Pro Loco di Preore — pagina iniziale">
-      <img src="../assets/logo.svg" alt="">
+      <img src="../assets/logo-small.png" width="256" height="256" alt="">
       <span>Pro Loco Preore</span>
     </a>
     <button class="btn btn-ghost" id="logout-btn" type="button" hidden>Esci</button>
@@ -262,8 +324,24 @@
           </div>
 
           <div class="field">
-            <label for="event-description">Descrizione</label>
-            <textarea id="event-description" name="description" rows="4"></textarea>
+            <span class="field-label" id="event-description-label">Descrizione</span>
+            <div class="field-rich">
+              <div class="rt-toolbar" role="toolbar" aria-label="Formattazione descrizione">
+                <button type="button" data-cmd="bold" aria-pressed="false" title="Grassetto (Ctrl+B)" aria-label="Grassetto"><strong>G</strong></button>
+                <button type="button" data-cmd="italic" aria-pressed="false" title="Corsivo (Ctrl+I)" aria-label="Corsivo"><em>C</em></button>
+                <span class="rt-sep" aria-hidden="true"></span>
+                <button type="button" data-cmd="insertUnorderedList" aria-pressed="false" title="Elenco puntato" aria-label="Elenco puntato">•≡</button>
+                <span class="rt-sep" aria-hidden="true"></span>
+                <span class="rt-size-group">
+                  <button type="button" data-size="rt-small" aria-pressed="false" title="Testo piccolo" aria-label="Testo piccolo">A−</button>
+                  <button type="button" data-size="" aria-pressed="true" title="Testo normale" aria-label="Testo normale">A</button>
+                  <button type="button" data-size="rt-big" aria-pressed="false" title="Testo grande" aria-label="Testo grande">A+</button>
+                </span>
+              </div>
+              <div id="event-description" class="rt-editor" contenteditable="true" role="textbox"
+                   aria-multiline="true" aria-labelledby="event-description-label"
+                   data-placeholder="Racconta l'evento…"></div>
+            </div>
           </div>
 
           <div class="field-row">
@@ -316,6 +394,7 @@
   <script src="../assets/vendor/supabase.min.js"></script>
   <script type="module">
     import { supabase, isConfigured, fmtDate, fmtTime, getPhotos } from '../assets/supabase.js';
+    import { sanitizeRichText, isRichText, richTextToPlain, plainToRichHtml, unwrapElement } from '../assets/richtext.js';
 
     var configWarning = document.getElementById('config-warning');
     var loginView = document.getElementById('login-view');
@@ -328,7 +407,8 @@
     var formTitle = document.getElementById('form-title');
     var eventFormPanel = document.getElementById('event-form-panel');
     var titleInput = document.getElementById('event-title');
-    var descriptionInput = document.getElementById('event-description');
+    var descriptionEditor = document.getElementById('event-description');
+    var rtToolbar = document.querySelector('.rt-toolbar');
     var dateInput = document.getElementById('event-date');
     var timeInput = document.getElementById('event-time');
     var locationInput = document.getElementById('event-location');
@@ -347,6 +427,75 @@
     var editingEvent = null;
     // Galleria in lavorazione: ogni voce è { kind:'existing', url, path } oppure { kind:'new', file, url:objectURL }.
     var photoItems = [];
+
+    /* ---------- Editor descrizione (grassetto, corsivo, elenco, 3 dimensioni) ---------- */
+
+    document.execCommand('defaultParagraphSeparator', false, 'p');
+    document.execCommand('styleWithCSS', false, false);
+
+    // execCommand('fontSize') è l'unico modo per applicare una dimensione via Selection;
+    // usa il marcatore <font size="7"> (valore che nessun browser produce spontaneamente)
+    // per sostituirlo in modo deterministico con uno span.rt-small/rt-big, o rimuoverlo
+    // del tutto per tornare al testo "normale".
+    function applyFontSize(cls) {
+      descriptionEditor.focus();
+      document.execCommand('fontSize', false, '7');
+      descriptionEditor.querySelectorAll('font[size="7"]').forEach(function (font) {
+        Array.prototype.forEach.call(font.querySelectorAll('span.rt-small, span.rt-big'), unwrapElement);
+        if (cls) {
+          var span = document.createElement('span');
+          span.className = cls;
+          while (font.firstChild) span.appendChild(font.firstChild);
+          font.replaceWith(span);
+        } else {
+          unwrapElement(font);
+        }
+      });
+    }
+
+    function syncToolbarState() {
+      Array.prototype.forEach.call(rtToolbar.querySelectorAll('[data-cmd]'), function (btn) {
+        var active = false;
+        try { active = document.queryCommandState(btn.dataset.cmd); } catch (err) { /* ignora comandi non supportati */ }
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+
+      var sizeCls = '';
+      var sel = window.getSelection();
+      if (sel && sel.rangeCount) {
+        var node = sel.getRangeAt(0).startContainer;
+        var el = node.nodeType === 1 ? node : node.parentElement;
+        var span = el && el.closest ? el.closest('span.rt-small, span.rt-big') : null;
+        if (span && descriptionEditor.contains(span)) sizeCls = span.className;
+      }
+      Array.prototype.forEach.call(rtToolbar.querySelectorAll('[data-size]'), function (btn) {
+        btn.setAttribute('aria-pressed', btn.dataset.size === sizeCls ? 'true' : 'false');
+      });
+    }
+
+    rtToolbar.addEventListener('click', function (e) {
+      var btn = e.target.closest('button');
+      if (!btn) return;
+      if (btn.dataset.cmd) {
+        descriptionEditor.focus();
+        document.execCommand(btn.dataset.cmd);
+      } else if (btn.dataset.size !== undefined) {
+        applyFontSize(btn.dataset.size);
+      }
+      syncToolbarState();
+    });
+
+    document.addEventListener('selectionchange', function () {
+      if (document.activeElement === descriptionEditor) syncToolbarState();
+    });
+
+    // Incolla come testo semplice: tiene fuori il markup di Word/Google Docs,
+    // così il sanitizer al salvataggio non deve fare quasi nulla.
+    descriptionEditor.addEventListener('paste', function (e) {
+      e.preventDefault();
+      var text = (e.clipboardData || window.clipboardData).getData('text/plain');
+      document.execCommand('insertText', false, text);
+    });
 
     function escapeHtml(str) {
       return String(str).replace(/[&<>"']/g, function (c) {
@@ -426,6 +575,7 @@
       editingEvent = null;
       formTitle.textContent = 'Nuovo evento';
       eventForm.reset();
+      descriptionEditor.innerHTML = ''; // form.reset() non tocca i contenteditable
       linksRows.innerHTML = '';
       addLinkRow();
       clearPhotoItems();
@@ -439,7 +589,9 @@
       editingEvent = ev;
       formTitle.textContent = 'Modifica evento';
       titleInput.value = ev.title || '';
-      descriptionInput.value = ev.description || '';
+      descriptionEditor.innerHTML = isRichText(ev.description)
+        ? sanitizeRichText(ev.description)
+        : plainToRichHtml(ev.description);
       dateInput.value = ev.event_date || '';
       timeInput.value = ev.start_time ? ev.start_time.slice(0, 5) : '';
       locationInput.value = ev.location || '';
@@ -589,7 +741,8 @@
 
       try {
         var title = titleInput.value.trim();
-        var description = descriptionInput.value.trim();
+        var description = sanitizeRichText(descriptionEditor.innerHTML);
+        if (!richTextToPlain(description)) description = '';
         var eventDate = dateInput.value;
         var startTime = timeInput.value || null;
         var location = locationInput.value.trim();

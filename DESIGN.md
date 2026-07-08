@@ -45,8 +45,9 @@ Famiglia unica: **Bricolage Grotesque** (variabile, pesi 400–800, **self-hosta
 - **Header**: fisso, trasparente su scrim sfumato, logo knockout bianco + wordmark, link "Informazioni" che scorre al footer.
 - **Footer**: dati istituzionali in `<dl>` raggruppati (Associazione / Contatti / Dati fiscali), link con sottolineatura al hover, accento blu.
 - **Eventi** (`#eventi`, tra hero e footer): stessa superficie `--ink-2` del footer per le card, bordo `--line`, raggio 14px. Due gruppi: "Prossimi eventi" (card intere con foto 3:2, badge data in overlay, descrizione troncata a 3 righe, badge "N foto" quando la galleria ne ha più di una) e "Archivio" (card compatte orizzontali, foto 1:1 120px, senza descrizione). Ogni card è cliccabile (`role="button"`, focus da tastiera, Invio/Spazio) e apre il **modale di dettaglio**. Stati gestiti via JS: caricamento, vuoto (con rimando ai social), errore; foto mancante = placeholder col logo knockout su `--ink`. Dati letti da Supabase (vedi sotto).
-- **Modale dettaglio evento**: dialog accessibile (`role="dialog"`, `aria-modal`, focus trap, chiusura con Esc / clic sul backdrop / ✕, focus ripristinato all'uscita, scroll del body bloccato) su backdrop scuro sfumato. Mostra la **galleria foto completa** (immagine `object-fit: contain` così la foto non viene tagliata, frecce prev/next + contatore + strip di miniature quando c'è più di una foto, navigazione con ←/→), titolo, data estesa · ora · luogo, descrizione integrale (`white-space: pre-wrap`, max 68ch) e i link.
+- **Modale dettaglio evento**: dialog accessibile (`role="dialog"`, `aria-modal`, focus trap, chiusura con Esc / clic sul backdrop / ✕, focus ripristinato all'uscita, scroll del body bloccato) su backdrop scuro sfumato. Mostra la **galleria foto completa** (immagine `object-fit: contain` così la foto non viene tagliata, frecce prev/next + contatore + strip di miniature quando c'è più di una foto, navigazione con ←/→), titolo, data estesa · ora · luogo, **descrizione integrale** (rich text sanificato — paragrafi, elenchi puntati, `span.rt-small`/`span.rt-big`; le descrizioni legacy in testo semplice restano su `white-space: pre-wrap`) e i link.
 - **Gestione eventi** (`/management`, non linkata dalla home, `noindex`): stesso sistema visivo ma layout applicativo (non fotografico) — header statico con bordo invece che overlay, pannelli `--ink-2` per form e lista. Login email/password (Supabase Auth), CRUD eventi, **upload foto multiple** con ridimensionamento lato client (canvas, cap 1600px) prima dell'upload sullo storage; griglia di anteprime con rimozione per foto e scelta della copertina (★). Il bootstrap dopo il login scatta solo sulla transizione reale logged-out→logged-in, così i refresh di sessione di supabase-js non azzerano il form in compilazione.
+- **Editor descrizione** (solo in `/management`): la textarea è sostituita da un'area `contenteditable` con toolbar (`role="toolbar"`) — grassetto, corsivo, elenco puntato e 3 dimensioni di testo (A−/A/A+, come `span.rt-small`/`span.rt-big`) — toolbar e area editabile condividono un unico bordo (`.field-rich`) per leggersi come un solo campo. Formattazione via `document.execCommand`; la dimensione usa il marcatore `<font size="7">` sostituito deterministicamente con gli span di classe. Il markup salvato è sanificato con un allowlist stretta (`assets/richtext.js`, condiviso con la home) sia al salvataggio sia in lettura.
 
 ## Motion
 
@@ -55,9 +56,16 @@ Famiglia unica: **Bricolage Grotesque** (variabile, pesi 400–800, **self-hosta
 
 ## Assets
 
-- `assets/logo.svg` — logo vettoriale 850×850 (china + blu `#0091DB`)
-- `assets/pozfest-*.jpg` — 12 fotografie dalle feste al Parco al Poz (POZFEST24, POZ Party, POZ FEST 2026; ~2048×1365), ordinate nel carosello alternando persone e cibo, usate con `object-fit: cover`
+- `assets/logo.svg` — sorgente vettoriale del logo (850×850, china + blu `#0091DB`), non più referenziata dalle pagine; rasterizzata una tantum in:
+  - `assets/logo-small.png` (256×256) — header, footer, placeholder card evento
+  - `assets/logo-512.png` — `logo` del JSON-LD Organization
+  - `assets/favicon-96.png` / `assets/apple-touch-icon.png` — favicon e icona iOS su tutte le pagine
+- `assets/pozfest-*.webp` — 11 fotografie dalle feste al Parco al Poz (POZFEST24, POZ Party, POZ FEST 2026), 1600px di larghezza, qualità 78, usate con `object-fit: cover` (convertite una tantum da JPG per il payload PageSpeed; i JPG originali restano in `assets/` come sorgente)
+- `assets/og-image.jpg` — 1200×630, crop dedicato per le anteprime social (Open Graph/Twitter Card)
 - `assets/fonts/*.woff2` — Bricolage Grotesque variabile self-hostata (subset latin + latin-ext)
+- `assets/richtext.js` — modulo condiviso: sanificazione allowlist delle descrizioni rich text (`sanitizeRichText`, `isRichText`, `richTextToPlain`, `plainToRichHtml`), usato sia da `/management` (al salvataggio) sia dalla home (in lettura)
 - `privacy.html` — informativa privacy, stesso sistema visivo (chrome d'inchiostro, prosa max 68ch), linkata dal footer
-- `assets/vendor/supabase.min.js` — `@supabase/supabase-js` UMD, vendorizzato (nessuna richiesta a CDN di terzi a runtime, coerente con i font self-hostati)
-- `assets/supabase.js` — client Supabase condiviso da home e `/management`, più helper di formattazione data/ora
+- `404.html` — pagina d'errore brandizzata (stesso chrome, nessun JS), servita automaticamente da GitHub Pages
+- `robots.txt` / `sitemap.xml` — indicizzazione: consentito tutto tranne nessuna esclusione esplicita (`/management` resta protetto da `noindex, nofollow` in pagina, non da `Disallow`); sitemap con la sola home (`privacy.html` è `noindex`, quindi esclusa)
+- `assets/vendor/supabase.min.js` — `@supabase/supabase-js` UMD, vendorizzato, caricato **solo da `/management`** (auth, storage, scrittura). La home non lo carica: legge gli eventi in sola lettura con una `fetch()` REST diretta (`fetchEvents()` in `assets/supabase.js`), evitando ~200 KB di libreria inutilizzati su una singola SELECT anonima
+- `assets/supabase.js` — helper Supabase condivisi (URL/chiave, formattazione data/ora, `fetchEvents()` per la home, client completo per `/management`)
