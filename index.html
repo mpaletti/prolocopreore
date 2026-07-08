@@ -650,7 +650,11 @@
       gap: 0.3rem;
       justify-content: center;
     }
-    .event-card--compact .event-body h4 { font-size: 1rem; }
+    .event-card--compact .event-body h4 { font-size: 1.2rem; }
+    .event-card--compact .event-subtitle {
+      font-size: 0.9rem;
+      margin-top: 0;
+    }
 
     /* Card cliccabili + dettaglio */
     .event-card { cursor: pointer; }
@@ -1215,7 +1219,7 @@
       }
       photoHtml += '</div>';
 
-      var subtitleHtml = (!compact && ev.subtitle) ? '<p class="event-subtitle">' + escapeHtml(ev.subtitle) + '</p>' : '';
+      var subtitleHtml = ev.subtitle ? '<p class="event-subtitle">' + escapeHtml(ev.subtitle) + '</p>' : '';
       var metaHtml = meta ? '<p class="event-meta">' + escapeHtml(meta) + '</p>' : '';
       var descText = isRichText(ev.description) ? richTextToPlain(ev.description) : ev.description;
       var descHtml = (!compact && descText) ? '<p class="event-desc">' + escapeHtml(descText) + '</p>' : '';
