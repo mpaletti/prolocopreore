@@ -179,28 +179,60 @@
     }
     .rt-sep { width: 1px; height: 1.35rem; background: var(--line); margin: 0 0.2rem; flex: none; }
 
-    .rt-size-group { display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
-    .rt-size-group button { border-radius: 0; width: auto; padding: 0 0.55rem; font-weight: 700; }
-    .rt-size-group button:first-child { border-right: 1px solid var(--line); }
-    .rt-size-group button:last-child { border-left: 1px solid var(--line); }
-    .rt-size-input {
+    /* Controllo dimensione testo stile Word: il numero è digitabile e non apre il
+       menu al clic (solo focus+selezione); la freccia dedicata apre il dropdown coi
+       preset. A+/A- sono bottoni toolbar indipendenti, non più fusi al campo. */
+    .rt-size-combo {
+      display: flex;
+      align-items: stretch;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--ink);
+      transition: border-color 0.15s var(--ease);
+    }
+    .rt-size-combo:focus-within { border-color: var(--accent); }
+    /* Selettore composto: deve battere in specificità input[type="text"] { width:100% }. */
+    .rt-size-combo .rt-size-input {
       font: inherit;
       font-size: 0.85rem;
       font-weight: 600;
-      width: 3.4rem;
+      width: 2.6rem;
       padding: 0 0.3rem;
       border: none;
       background: transparent;
       color: var(--text);
       text-align: center;
     }
-    .rt-size-input:focus { outline: none; background: var(--ink-2); }
+    .rt-size-combo .rt-size-input:focus { outline: none; background: var(--ink-2); }
+    .rt-size-arrow {
+      width: 1.4rem;
+      border: none;
+      border-left: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      color: var(--text-dim);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: background 0.15s var(--ease), color 0.15s var(--ease);
+    }
+    .rt-size-arrow:hover { background: var(--ink-2); color: var(--text); }
+    .rt-size-arrow[aria-expanded="true"] {
+      background: oklch(75% 0.115 235 / 0.16);
+      color: var(--accent);
+    }
+    .rt-size-arrow svg { width: 0.6rem; height: 0.6rem; display: block; }
+
+    .rt-btn-size { width: auto; padding: 0 0.5rem; font-weight: 700; }
+    .rt-btn-size:disabled { opacity: 0.35; cursor: default; }
+    .rt-btn-size:disabled:hover { background: transparent; color: var(--text-dim); }
 
     /* Combobox custom (dimensione testo, luogo): il <datalist> nativo filtra le
        opzioni sul valore già presente nel campo, quindi con un valore già scritto
        (sempre il caso qui) al clic non mostra nulla — da qui il menu proprio,
        appeso a <body> in position:fixed per uscire dagli overflow:hidden di
-       .field-rich e .rt-size-group. */
+       .field-rich e .rt-size-combo. */
     .combo-menu {
       position: fixed;
       z-index: 30;
@@ -245,7 +277,7 @@
     .combo-wrap input { padding-right: 2.25rem; }
 
     .rt-editor {
-      min-height: 5rem;
+      min-height: 12rem;
       padding: 0.65rem 0.85rem;
       /* 1rem = 16px: è la dimensione "normale" di default del testo. Tenendola a 16px
          netti, il campo dimensione mostra 16 (non 15) quando non c'è uno span di
@@ -472,11 +504,14 @@
                 <span class="rt-sep" aria-hidden="true"></span>
                 <button type="button" data-cmd="insertUnorderedList" aria-pressed="false" title="Elenco puntato" aria-label="Elenco puntato">•≡</button>
                 <span class="rt-sep" aria-hidden="true"></span>
-                <span class="rt-size-group">
-                  <button type="button" data-size-delta="-2" title="Riduci dimensione testo" aria-label="Riduci dimensione testo">A−</button>
+                <span class="rt-size-combo">
                   <input type="text" inputmode="numeric" autocomplete="off" class="rt-size-input" id="rt-size-input" role="combobox" aria-expanded="false" aria-controls="rt-size-menu" aria-autocomplete="none" placeholder="16" title="Dimensione testo in pixel" aria-label="Dimensione testo in pixel">
-                  <button type="button" data-size-delta="2" title="Aumenta dimensione testo" aria-label="Aumenta dimensione testo">A+</button>
+                  <button type="button" class="rt-size-arrow" id="rt-size-arrow" tabindex="-1" aria-expanded="false" aria-controls="rt-size-menu" aria-label="Scegli dimensione testo" title="Scegli dimensione testo">
+                    <svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
                 </span>
+                <button type="button" class="rt-btn-size" data-size-delta="2" title="Aumenta dimensione testo" aria-label="Aumenta dimensione testo">A+</button>
+                <button type="button" class="rt-btn-size" data-size-delta="-2" title="Riduci dimensione testo" aria-label="Riduci dimensione testo">A−</button>
               </div>
               <div id="event-description" class="rt-editor" contenteditable="true" role="textbox"
                    aria-multiline="true" aria-labelledby="event-description-label"
@@ -553,6 +588,9 @@
     var descriptionEditor = document.getElementById('event-description');
     var rtToolbar = document.querySelector('.rt-toolbar');
     var sizeInput = document.getElementById('rt-size-input');
+    var sizeArrow = document.getElementById('rt-size-arrow');
+    var sizeIncBtn = rtToolbar.querySelector('[data-size-delta="2"]');
+    var sizeDecBtn = rtToolbar.querySelector('[data-size-delta="-2"]');
     var dateInput = document.getElementById('event-date');
     var timeInput = document.getElementById('event-time');
     var locationInput = document.getElementById('event-location');
@@ -576,8 +614,10 @@
        Sostituisce i <datalist> nativi: in Chromium filtrano le opzioni sul valore
        già presente nel campo, quindi con un valore già scritto (qui sempre il caso)
        al clic non mostravano nulla. Il menu è appeso a <body> in position:fixed per
-       uscire dagli overflow:hidden di .field-rich/.rt-size-group; mostra sempre
-       tutte le opzioni e lascia comunque digitare testo libero. */
+       uscire dagli overflow:hidden di .field-rich/.rt-size-combo; mostra sempre
+       tutte le opzioni e lascia comunque digitare testo libero. Con `config.trigger`
+       (usato dalla dimensione testo) il campo apre il menu solo tramite quella freccia,
+       non al clic: il clic sul numero serve solo a mettere a fuoco/digitare, come Word. */
     function setupCombobox(input, options, onPick, config) {
       config = config || {};
       var menuId = input.getAttribute('aria-controls');
@@ -607,7 +647,7 @@
       }
 
       function position() {
-        var r = input.getBoundingClientRect();
+        var r = (config.anchor || input).getBoundingClientRect();
         menu.style.left = r.left + 'px';
         menu.style.top = (r.bottom + 4) + 'px';
         if (config.matchWidth) menu.style.width = r.width + 'px';
@@ -630,6 +670,7 @@
         isOpen = true;
         activeIndex = -1;
         input.setAttribute('aria-expanded', 'true');
+        if (config.trigger) config.trigger.setAttribute('aria-expanded', 'true');
         var selected = menu.querySelector('[aria-selected="true"]');
         if (selected) selected.scrollIntoView({ block: 'nearest' });
       }
@@ -640,6 +681,7 @@
         isOpen = false;
         activeIndex = -1;
         input.setAttribute('aria-expanded', 'false');
+        if (config.trigger) config.trigger.setAttribute('aria-expanded', 'false');
         input.removeAttribute('aria-activedescendant');
       }
 
@@ -657,9 +699,22 @@
         pick(options[optionEls().indexOf(el)]);
       });
 
-      input.addEventListener('mousedown', function () {
-        if (!isOpen) open();
-      });
+      if (config.trigger) {
+        // Con la freccia dedicata il clic sul campo NON apre il menu: solo focus,
+        // così si può digitare subito. Il mousedown sulla freccia non deve rubare
+        // il focus al campo (o all'editor, se il focus era lì) prima del click.
+        config.trigger.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        config.trigger.addEventListener('click', function () {
+          if (isOpen) { close(); } else { input.focus(); open(); }
+        });
+      } else {
+        input.addEventListener('mousedown', function () {
+          if (!isOpen) open();
+        });
+      }
+      if (config.selectOnFocus) {
+        input.addEventListener('focus', function () { input.select(); });
+      }
       input.addEventListener('blur', close);
       input.addEventListener('keydown', function (e) {
         if (e.key === 'ArrowDown') {
@@ -681,10 +736,16 @@
       });
 
       document.addEventListener('mousedown', function (e) {
-        if (isOpen && e.target !== input && !menu.contains(e.target)) close();
+        if (isOpen && e.target !== input && e.target !== config.trigger && !menu.contains(e.target)) close();
       }, true);
       window.addEventListener('resize', function () { if (isOpen) position(); });
-      window.addEventListener('scroll', function () { if (isOpen) close(); }, true);
+      // Capture (lo scroll non risale a bubble): chiude solo su scroll fuori dal menu.
+      // Altrimenti lo scrollIntoView interno di open()/setActive() (per rivelare
+      // l'opzione preselezionata in una lista più alta di max-height) si richiuderebbe
+      // da solo nello stesso istante in cui si apre.
+      window.addEventListener('scroll', function (e) {
+        if (isOpen && !menu.contains(e.target)) close();
+      }, true);
 
       return { close: close };
     }
@@ -746,22 +807,35 @@
       }
     }
 
+    // Guardia di rientranza: descriptionEditor.focus() qui sotto sposta il focus via
+    // dal campo numerico, e se questo aveva un valore digitato non confermato (niente
+    // Enter/blur ancora), il browser genera un 'change' nativo che richiama proprio
+    // questa funzione PRIMA che la chiamata in corso sia terminata. Senza la guardia,
+    // la chiamata annidata applicherebbe un valore stantio e verrebbe subito sovrascritta
+    // da quella esterna, ma con effetti collaterali imprevedibili su selezione/menu.
+    var applyingFontSize = false;
     function applyFontSizePx(px) {
-      px = Math.max(6, Math.min(72, Math.round(px)));
-      ensureEditorSelection();
-      descriptionEditor.focus();
-      document.execCommand('fontSize', false, '7');
-      var produced = [];
-      descriptionEditor.querySelectorAll('font[size="7"]').forEach(function (font) {
-        stripSizeMarkers(font);
-        var span = document.createElement('span');
-        span.style.fontSize = px + 'px';
-        while (font.firstChild) span.appendChild(font.firstChild);
-        font.replaceWith(span);
-        produced.push(span);
-      });
-      restoreSelectionAround(produced);
-      sizeInput.value = px;
+      if (applyingFontSize) return;
+      applyingFontSize = true;
+      try {
+        px = Math.max(6, Math.min(72, Math.round(px)));
+        ensureEditorSelection();
+        descriptionEditor.focus();
+        document.execCommand('fontSize', false, '7');
+        var produced = [];
+        descriptionEditor.querySelectorAll('font[size="7"]').forEach(function (font) {
+          stripSizeMarkers(font);
+          var span = document.createElement('span');
+          span.style.fontSize = px + 'px';
+          while (font.firstChild) span.appendChild(font.firstChild);
+          font.replaceWith(span);
+          produced.push(span);
+        });
+        restoreSelectionAround(produced);
+        sizeInput.value = px;
+      } finally {
+        applyingFontSize = false;
+      }
     }
 
     // Legge la dimensione della selezione corrente: dallo span che la avvolge se c'è,
@@ -803,6 +877,8 @@
 
       var px = currentSizePx();
       if (px != null && document.activeElement !== sizeInput) sizeInput.value = px;
+      sizeIncBtn.disabled = px != null && px >= 72;
+      sizeDecBtn.disabled = px != null && px <= 6;
     }
 
     // Senza questo, il mousedown su un bottone della toolbar sposta il focus fuori
@@ -833,11 +909,11 @@
       }
     });
 
-    var SIZE_PRESETS = [10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 40, 44, 48];
+    var SIZE_PRESETS = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72];
     var sizeCombo = setupCombobox(sizeInput, SIZE_PRESETS, function (px) {
       applyFontSizePx(px);
       syncToolbarState();
-    });
+    }, { trigger: sizeArrow, anchor: sizeInput.closest('.rt-size-combo'), selectOnFocus: true });
 
     var LOCATION_PRESETS = [
       'Parco al Poz - Preore, Tre Ville (TN)',
@@ -920,7 +996,7 @@
         tile.className = 'photo-tile' + (i === 0 ? ' is-cover' : '');
 
         var img = document.createElement('img');
-        img.src = item.url;
+        img.src = item.thumb_url || item.url;
         img.alt = '';
         tile.appendChild(img);
 
@@ -1004,7 +1080,7 @@
       clearPhotoItems();
       photoInput.value = '';
       getPhotos(ev).forEach(function (p) {
-        photoItems.push({ kind: 'existing', url: p.url, path: p.path || null });
+        photoItems.push({ kind: 'existing', url: p.url, path: p.path || null, thumb_url: p.thumb_url || null, thumb_path: p.thumb_path || null });
       });
       renderPhotoPreviews();
 
@@ -1013,7 +1089,38 @@
       eventFormPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function resizeImage(file, maxDim) {
+    // Safari NON restituisce null da canvas.toBlob(cb, 'image/webp') se non supporta
+    // l'encoder: fa fallback silenzioso a PNG (che uscirebbe con estensione .webp
+    // sbagliata). Va rilevato in anticipo, non dedotto da un blob nullo.
+    var WEBP_OK = document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') === 0;
+
+    function drawResized(img, maxDim) {
+      var width = img.width, height = img.height;
+      if (width > maxDim || height > maxDim) {
+        if (width > height) { height = Math.round(height * maxDim / width); width = maxDim; }
+        else { width = Math.round(width * maxDim / height); height = maxDim; }
+      }
+      var canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      return canvas;
+    }
+
+    function canvasToBlob(canvas) {
+      var mime = WEBP_OK ? 'image/webp' : 'image/jpeg';
+      var quality = WEBP_OK ? 0.8 : 0.82;
+      return new Promise(function (resolve, reject) {
+        canvas.toBlob(function (blob) {
+          if (blob) resolve({ blob: blob, mime: mime, ext: WEBP_OK ? '.webp' : '.jpg' });
+          else reject(new Error('Impossibile elaborare la foto.'));
+        }, mime, quality);
+      });
+    }
+
+    // Un solo decode del file per produrre sia la variante intera (1600px, per il
+    // modale) sia la miniatura (800px, per le card): evita di rileggere il file due volte.
+    function encodeSizes(file) {
       return new Promise(function (resolve, reject) {
         var reader = new FileReader();
         reader.onerror = reject;
@@ -1021,18 +1128,12 @@
           var img = new Image();
           img.onerror = reject;
           img.onload = function () {
-            var width = img.width, height = img.height;
-            if (width > maxDim || height > maxDim) {
-              if (width > height) { height = Math.round(height * maxDim / width); width = maxDim; }
-              else { width = Math.round(width * maxDim / height); height = maxDim; }
-            }
-            var canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-            canvas.toBlob(function (blob) {
-              if (blob) resolve(blob); else reject(new Error('Impossibile elaborare la foto.'));
-            }, 'image/jpeg', 0.82);
+            Promise.all([
+              canvasToBlob(drawResized(img, 1600)),
+              canvasToBlob(drawResized(img, 800))
+            ]).then(function (results) {
+              resolve({ main: results[0], thumb: results[1] });
+            }, reject);
           };
           img.src = reader.result;
         };
@@ -1040,17 +1141,25 @@
       });
     }
 
-    async function uploadPhoto(blob) {
-      var path = crypto.randomUUID() + '.jpg';
-      var up = await supabase.storage.from('event-photos').upload(path, blob, { contentType: 'image/jpeg', upsert: false });
+    async function uploadPhoto(sizes) {
+      var id = crypto.randomUUID();
+      var mainPath = id + sizes.main.ext;
+      var thumbPath = id + '-t' + sizes.thumb.ext;
+      // Nomi UUID = contenuto immutabile: cache di un anno sicura, niente più il
+      // default di 1h di Supabase Storage segnalato da PageSpeed Insights.
+      var up = await supabase.storage.from('event-photos').upload(mainPath, sizes.main.blob, { contentType: sizes.main.mime, upsert: false, cacheControl: '31536000' });
       if (up.error) throw up.error;
-      var pub = supabase.storage.from('event-photos').getPublicUrl(path);
-      return { photo_url: pub.data.publicUrl, photo_path: path };
+      var upThumb = await supabase.storage.from('event-photos').upload(thumbPath, sizes.thumb.blob, { contentType: sizes.thumb.mime, upsert: false, cacheControl: '31536000' });
+      if (upThumb.error) throw upThumb.error;
+      var pub = supabase.storage.from('event-photos').getPublicUrl(mainPath);
+      var pubThumb = supabase.storage.from('event-photos').getPublicUrl(thumbPath);
+      return { photo_url: pub.data.publicUrl, photo_path: mainPath, thumb_url: pubThumb.data.publicUrl, thumb_path: thumbPath };
     }
 
-    async function deletePhoto(path) {
-      if (!path) return;
-      await supabase.storage.from('event-photos').remove([path]);
+    async function deletePhoto(paths) {
+      var list = (Array.isArray(paths) ? paths : [paths]).filter(Boolean);
+      if (!list.length) return;
+      await supabase.storage.from('event-photos').remove(list);
     }
 
     async function handleDelete(ev) {
@@ -1058,7 +1167,7 @@
       try {
         var photos = getPhotos(ev);
         for (var i = 0; i < photos.length; i++) {
-          if (photos[i].path) await deletePhoto(photos[i].path);
+          await deletePhoto([photos[i].path, photos[i].thumb_path]);
         }
         var res = await supabase.from('events').delete().eq('id', ev.id);
         if (res.error) throw res.error;
@@ -1098,7 +1207,7 @@
           ].filter(Boolean).join(' · ');
 
           var thumbHtml = photos.length
-            ? '<div class="admin-list-thumb"><img src="' + escapeHtml(photos[0].url) + '" alt=""></div>'
+            ? '<div class="admin-list-thumb"><img src="' + escapeHtml(photos[0].thumb_url || photos[0].url) + '" alt=""></div>'
             : '<div class="admin-list-thumb is-placeholder"><img src="../assets/logo-small.png" width="256" height="256" alt=""></div>';
 
           li.innerHTML =
@@ -1184,14 +1293,14 @@
         for (var i = 0; i < photoItems.length; i++) {
           var item = photoItems[i];
           if (item.kind === 'existing') {
-            finalPhotos.push({ url: item.url, path: item.path });
+            finalPhotos.push({ url: item.url, path: item.path, thumb_url: item.thumb_url || undefined, thumb_path: item.thumb_path || undefined });
             if (item.path) keptPaths.push(item.path);
           } else {
             eventStatus.textContent = 'Caricamento foto ' + (i + 1) + ' di ' + photoItems.length + '…';
             eventStatus.hidden = false;
-            var blob = await resizeImage(item.file, 1600);
-            var uploaded = await uploadPhoto(blob);
-            finalPhotos.push({ url: uploaded.photo_url, path: uploaded.photo_path });
+            var sizes = await encodeSizes(item.file);
+            var uploaded = await uploadPhoto(sizes);
+            finalPhotos.push({ url: uploaded.photo_url, path: uploaded.photo_path, thumb_url: uploaded.thumb_url, thumb_path: uploaded.thumb_path });
           }
         }
 
@@ -1199,7 +1308,7 @@
         var oldPhotos = editingEvent ? getPhotos(editingEvent) : [];
         for (var j = 0; j < oldPhotos.length; j++) {
           if (oldPhotos[j].path && keptPaths.indexOf(oldPhotos[j].path) < 0) {
-            await deletePhoto(oldPhotos[j].path);
+            await deletePhoto([oldPhotos[j].path, oldPhotos[j].thumb_path]);
           }
         }
 

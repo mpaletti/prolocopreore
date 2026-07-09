@@ -20,9 +20,28 @@
   <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon-96.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Senza href: i browser senza imagesrcset lo ignorano; con un href di fallback
+       rischieremmo di scaricare sia il 2048w (fallback) sia l'1280w (scelto dal
+       browser che capisce imagesrcset) per la stessa immagine LCP. -->
+  <link rel="preload" as="image" fetchpriority="high"
+        imagesrcset="assets/pozfest-01-tavoli-1280.webp 1280w, assets/pozfest-01-tavoli.webp 2048w"
+        imagesizes="100vw">
   <link rel="preconnect" href="https://tnxkxgaczwkkkrdiusdz.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://tnxkxgaczwkkkrdiusdz.supabase.co">
+  <link rel="modulepreload" href="assets/supabase.js">
+  <link rel="modulepreload" href="assets/richtext.js">
   <title>Pro Loco di Preore APS</title>
   <script>document.documentElement.classList.remove('no-js');</script>
+  <script>
+    // Avvio anticipato della SELECT eventi, prima che il parser HTML arrivi al modulo
+    // che la consuma (assets/supabase.js, import più in basso): URL/chiave duplicati
+    // qui apposta, tenerli in sync con le costanti in assets/supabase.js. apikey in
+    // query string (non header) per restare "simple request" ed evitare il preflight
+    // OPTIONS che un header custom come apikey impone alle richieste CORS.
+    window.__eventsPromise = fetch(
+      "https://tnxkxgaczwkkkrdiusdz.supabase.co/rest/v1/events?select=*&order=event_date.asc&apikey=sb_publishable_zWkm_KntqYVSMOHoS73KHA_n7_283Vm"
+    ).catch(function (err) { return err; });
+  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -545,7 +564,7 @@
       /* auto-fill (non auto-fit): con 1-3 eventi le colonne vuote restano invisibili
          invece di far stirare l'unica card a piena larghezza. Il tetto a 420px evita
          comunque card spropositate su monitor molto larghi. */
-      grid-template-columns: repeat(auto-fill, minmax(340px, 420px));
+      grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 420px));
       gap: 2rem;
     }
     .events-grid > li { display: flex; }
@@ -630,6 +649,10 @@
       font-size: 0.95rem;
       color: var(--text-dim);
       max-width: 60ch;
+      /* richTextToPreview() mette un \n reale a fine paragrafo/voce elenco: pre-line
+         lo rende come a-capo e collassa gli altri spazi (invece di un unico blocco
+         di testo appiattito). */
+      white-space: pre-line;
     }
     /* Eventi passati: card compatte in riga, senza descrizione */
     .events-grid--archive {
@@ -661,8 +684,8 @@
     .event-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     .event-desc {
       display: -webkit-box;
-      line-clamp: 4;
-      -webkit-line-clamp: 4;
+      line-clamp: 3;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
@@ -913,34 +936,38 @@
     <section class="hero" id="carosello" aria-roledescription="carosello" aria-label="Fotografie dagli eventi della Pro Loco">
       <div class="slides">
         <div class="slide is-active" role="group" aria-roledescription="diapositiva" aria-label="1 di 10">
-          <img src="assets/pozfest-01-tavoli.webp" width="2048" height="1363" alt="I tavoli della festa al tramonto tra i gazebo della Pro Loco e i filari di luci, con le montagne sullo sfondo" fetchpriority="high" decoding="async">
+          <img src="assets/pozfest-01-tavoli.webp" srcset="assets/pozfest-01-tavoli-1280.webp 1280w, assets/pozfest-01-tavoli.webp 2048w" sizes="100vw" width="2048" height="1363" alt="I tavoli della festa al tramonto tra i gazebo della Pro Loco e i filari di luci, con le montagne sullo sfondo" fetchpriority="high" decoding="async">
         </div>
+        <!-- Slide 2-10: solo data-src/data-srcset. Sono impilate a inset:0 nel viewport
+             quindi loading="lazy" sarebbe un no-op; il carosello (warm(), pag. sotto)
+             promuove ciascuna al vero src solo quando serve, per non scaricare ~1,6 MiB
+             di foto insieme al primo paint. -->
         <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="2 di 10" aria-hidden="true">
-          <img src="assets/pozfest-08-costine.webp" width="2048" height="1365" alt="Costine alla griglia con patatine su un vassoio giallo" loading="lazy" decoding="async">
+          <img data-src="assets/pozfest-08-costine.webp" data-srcset="assets/pozfest-08-costine-1280.webp 1280w, assets/pozfest-08-costine.webp 2048w" data-sizes="100vw" width="2048" height="1365" alt="Costine alla griglia con patatine su un vassoio giallo" decoding="async">
         </div>
         <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="3 di 10" aria-hidden="true">
-          <img src="assets/pozfest-03-dj.webp" width="2048" height="1363" alt="Il dj alla console del POZFEST tra i fasci di luce blu, davanti al pubblico che balla" loading="lazy" decoding="async">
+          <img data-src="assets/pozfest-03-dj.webp" data-srcset="assets/pozfest-03-dj-1280.webp 1280w, assets/pozfest-03-dj.webp 2048w" data-sizes="100vw" width="2048" height="1363" alt="Il dj alla console del POZFEST tra i fasci di luce blu, davanti al pubblico che balla" decoding="async">
         </div>
         <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="4 di 10" aria-hidden="true">
-          <img src="assets/pozfest-11-parco.webp" width="2048" height="1365" alt="Il Parco al Poz di sera: tendoni illuminati, filari di luci e il pubblico ai tavoli" loading="lazy" decoding="async">
+          <img data-src="assets/pozfest-11-parco.webp" data-srcset="assets/pozfest-11-parco-1280.webp 1280w, assets/pozfest-11-parco.webp 2048w" data-sizes="100vw" width="2048" height="1365" alt="Il Parco al Poz di sera: tendoni illuminati, filari di luci e il pubblico ai tavoli" decoding="async">
         </div>
         <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="5 di 10" aria-hidden="true">
-          <img src="assets/pozfest-06-panino.webp" width="2048" height="1363" alt="Primo piano di un panino al pulled pork con insalata su un vassoio giallo" loading="lazy" decoding="async">
+          <img data-src="assets/pozfest-06-panino.webp" data-srcset="assets/pozfest-06-panino-1280.webp 1280w, assets/pozfest-06-panino.webp 2048w" data-sizes="100vw" width="2048" height="1363" alt="Primo piano di un panino al pulled pork con insalata su un vassoio giallo" decoding="async">
         </div>
         <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="6 di 10" aria-hidden="true">
-          <img src="assets/pozfest-12-palco.webp" width="2048" height="1363" alt="Il pubblico davanti al palco sotto il tendone, in bianco e nero, nel controluce dei riflettori" loading="lazy" decoding="async">
+          <img data-src="assets/pozfest-12-palco.webp" data-srcset="assets/pozfest-12-palco-1280.webp 1280w, assets/pozfest-12-palco.webp 2048w" data-sizes="100vw" width="2048" height="1363" alt="Il pubblico davanti al palco sotto il tendone, in bianco e nero, nel controluce dei riflettori" decoding="async">
         </div>
         <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="7 di 10" aria-hidden="true">
-          <img src="assets/pozfest-02-griglia.webp" width="2048" height="1363" alt="In cucina al POZFEST: un volontario alla griglia piena di hamburger" loading="lazy" decoding="async">
+          <img data-src="assets/pozfest-02-griglia.webp" data-srcset="assets/pozfest-02-griglia-1280.webp 1280w, assets/pozfest-02-griglia.webp 2048w" data-sizes="100vw" width="2048" height="1363" alt="In cucina al POZFEST: un volontario alla griglia piena di hamburger" decoding="async">
         </div>
         <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="8 di 10" aria-hidden="true">
-          <img src="assets/pozfest-10-volontari.webp" width="2048" height="1365" alt="Un giovane volontario porta ai tavoli tre vassoi con panini e patatine" loading="lazy" decoding="async">
+          <img data-src="assets/pozfest-10-volontari.webp" data-srcset="assets/pozfest-10-volontari-1280.webp 1280w, assets/pozfest-10-volontari.webp 2048w" data-sizes="100vw" width="2048" height="1365" alt="Un giovane volontario porta ai tavoli tre vassoi con panini e patatine" decoding="async">
         </div>
         <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="9 di 10" aria-hidden="true">
-          <img src="assets/pozfest-05-tendoni.webp" width="2048" height="1363" alt="La festa serale tra i tendoni e i filari di luci del Parco al Poz" loading="lazy" decoding="async">
+          <img data-src="assets/pozfest-05-tendoni.webp" data-srcset="assets/pozfest-05-tendoni-1280.webp 1280w, assets/pozfest-05-tendoni.webp 2048w" data-sizes="100vw" width="2048" height="1363" alt="La festa serale tra i tendoni e i filari di luci del Parco al Poz" decoding="async">
         </div>
         <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="10 di 10" aria-hidden="true">
-          <img src="assets/pozfest-07-pozparty.webp" width="2048" height="1363" alt="Il pubblico del POZ Party sotto il tendone illuminato di verde" loading="lazy" decoding="async">
+          <img data-src="assets/pozfest-07-pozparty.webp" data-srcset="assets/pozfest-07-pozparty-1280.webp 1280w, assets/pozfest-07-pozparty.webp 2048w" data-sizes="100vw" width="2048" height="1363" alt="Il pubblico del POZ Party sotto il tendone illuminato di verde" decoding="async">
         </div>
       </div>
 
@@ -1076,8 +1103,29 @@
 
       hero.style.setProperty('--interval', INTERVAL + 'ms');
 
+      // Le slide 2-10 partono con solo data-src/data-srcset (vedi markup): sono
+      // impilate a inset:0 nel viewport, quindi loading="lazy" sarebbe un no-op e
+      // scaricherebbe tutte le ~1,6 MiB insieme al primo paint. warm() promuove la
+      // slide n al vero src solo quando sta per essere mostrata (nav manuale) o ha
+      // l'intero intervallo di autoplay per caricarsi (slide successiva).
+      function warm(n) {
+        n = (n + slides.length) % slides.length;
+        var img = slides[n].querySelector('img');
+        if (img.dataset.srcset) {
+          img.srcset = img.dataset.srcset;
+          img.sizes = img.dataset.sizes || '100vw';
+          img.removeAttribute('data-srcset');
+          img.removeAttribute('data-sizes');
+        }
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
+        }
+      }
+
       function go(n) {
         n = (n + slides.length) % slides.length;
+        warm(n);
         if (n === current) { restartTimer(); return; }
         var prev = current;
 
@@ -1183,7 +1231,7 @@
 
   <script type="module">
     import { isConfigured, fetchEvents, fmtDate, fmtDateShort, fmtTime, todayISO, getPhotos } from './assets/supabase.js';
-    import { sanitizeRichText, isRichText, richTextToPlain } from './assets/richtext.js';
+    import { sanitizeRichText, isRichText, richTextToPlain, richTextToPreview } from './assets/richtext.js';
 
     var status = document.querySelector('.events-status');
     var upcomingList = document.querySelector('[data-group="prossimi"] .events-grid');
@@ -1208,10 +1256,18 @@
       var badge = fmtDateShort(ev.event_date);
       var meta = [fmtTime(ev.start_time), ev.location].filter(Boolean).join(' · ');
       var photos = getPhotos(ev);
-      var cover = photos.length ? photos[0].url : null;
+      var cover = photos.length ? photos[0] : null;
 
+      // Con thumb_url (foto caricate dopo l'introduzione delle miniature): srcset
+      // thumb/full con i breakpoint reali della card (.events-grid, 340-420px piena,
+      // 120/88px compatta) cosi' le card non scaricano piu' il jpg da 1600px intero.
+      // Le foto legacy senza thumb_url restano sul solo url (nessun srcset).
+      var coverSrcset = (cover && cover.thumb_url)
+        ? ' srcset="' + escapeHtml(cover.thumb_url) + ' 800w, ' + escapeHtml(cover.url) + ' 1600w"' +
+          ' sizes="' + (compact ? '120px' : '(max-width: 680px) 92vw, 420px') + '"'
+        : '';
       var photoHtml = cover
-        ? '<div class="event-photo"><img src="' + escapeHtml(cover) + '" alt="" loading="lazy" decoding="async">'
+        ? '<div class="event-photo"><img src="' + escapeHtml(cover.thumb_url || cover.url) + '"' + coverSrcset + ' alt="" loading="lazy" decoding="async">'
         : '<div class="event-photo is-placeholder"><img src="assets/logo-small.png" width="256" height="256" alt="" loading="lazy">';
       photoHtml += '<span class="event-date-badge"><span>' + badge.weekday + '</span><strong>' + badge.day + '</strong><span>' + badge.month + '</span></span>';
       if (!compact && photos.length > 1) {
@@ -1221,7 +1277,7 @@
 
       var subtitleHtml = ev.subtitle ? '<p class="event-subtitle">' + escapeHtml(ev.subtitle) + '</p>' : '';
       var metaHtml = meta ? '<p class="event-meta">' + escapeHtml(meta) + '</p>' : '';
-      var descText = isRichText(ev.description) ? richTextToPlain(ev.description) : ev.description;
+      var descText = isRichText(ev.description) ? richTextToPreview(ev.description) : ev.description;
       var descHtml = (!compact && descText) ? '<p class="event-desc">' + escapeHtml(descText) + '</p>' : '';
       var moreHtml = compact ? '' : '<span class="event-more" aria-hidden="true">Dettagli →</span>';
 
@@ -1270,7 +1326,7 @@
       if (galleryPhotos.length > 1) {
         modalThumbs.innerHTML = galleryPhotos.map(function (p, idx) {
           return '<button type="button" class="event-modal-thumb" data-idx="' + idx +
-            '" aria-label="Mostra foto ' + (idx + 1) + '"><img src="' + escapeHtml(p.url) + '" alt=""></button>';
+            '" aria-label="Mostra foto ' + (idx + 1) + '"><img src="' + escapeHtml(p.thumb_url || p.url) + '" alt=""></button>';
         }).join('');
         modalThumbs.hidden = false;
       } else {

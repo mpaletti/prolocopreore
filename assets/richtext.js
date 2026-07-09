@@ -104,6 +104,44 @@ export function richTextToPlain(html) {
   return (tpl.content.textContent || "").replace(/\s+/g, " ").trim();
 }
 
+// Testo di un singolo blocco (p o li): i <br> interni diventano a-capo, il resto
+// degli spazi viene collassato riga per riga (non con un replace globale, altrimenti
+// l'a-capo appena inserito verrebbe anch'esso trattato come "spazio" e sparirebbe).
+function blockLines(el) {
+  var tpl = document.createElement("template");
+  tpl.innerHTML = el.innerHTML.replace(/<br\s*\/?>/gi, "\n");
+  var raw = tpl.content.textContent || "";
+  return raw.split("\n").map(function (s) { return s.replace(/\s+/g, " ").trim(); }).filter(Boolean).join("\n");
+}
+
+// Anteprima per la card evento (clamp CSS a 3 righe): a differenza di richTextToPlain
+// preserva l'interruzione tra blocchi invece di appiattirla in uno spazio — ogni <p>
+// resta una riga, ogni <li> una riga con bullet "• ". Serve solo alla preview: il
+// salvataggio/lettura del rich text integrale restano su sanitizeRichText.
+export function richTextToPreview(html) {
+  var tpl = document.createElement("template");
+  tpl.innerHTML = sanitizeRichText(html);
+  var lines = [];
+  Array.prototype.forEach.call(tpl.content.childNodes, function (node) {
+    if (node.nodeType === 3) {
+      var text = (node.textContent || "").replace(/\s+/g, " ").trim();
+      if (text) lines.push(text);
+      return;
+    }
+    if (node.nodeType !== 1) return;
+    if (node.tagName === "UL") {
+      Array.prototype.forEach.call(node.children, function (li) {
+        var t = blockLines(li);
+        if (t) lines.push("• " + t);
+      });
+    } else {
+      var t2 = blockLines(node);
+      if (t2) lines.push(t2);
+    }
+  });
+  return lines.join("\n");
+}
+
 // Migrazione one-way delle descrizioni legacy quando vengono aperte in modifica.
 export function plainToRichHtml(text) {
   var str = String(text == null ? "" : text);

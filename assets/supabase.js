@@ -15,11 +15,16 @@ export const supabase = (isConfigured && window.supabase)
   : null;
 
 // Lettura pubblica degli eventi via REST diretta (PostgREST), senza supabase-js.
+// apikey in query string (non header): resta una "simple request" CORS, niente
+// preflight OPTIONS. index.html avvia già questa stessa richiesta da un <script>
+// inline in <head> (window.__eventsPromise), prima che il parser arrivi a questo
+// modulo import; qui la si consuma se disponibile, altrimenti si fa il fetch normale
+// (es. da management/index.html, che non ha quello script anticipato).
 export async function fetchEvents() {
-  const res = await fetch(
-    SUPABASE_URL + "/rest/v1/events?select=*&order=event_date.asc",
-    { headers: { apikey: SUPABASE_ANON_KEY } }
-  );
+  const url = SUPABASE_URL + "/rest/v1/events?select=*&order=event_date.asc&apikey=" + SUPABASE_ANON_KEY;
+  let res = window.__eventsPromise ? await window.__eventsPromise : null;
+  window.__eventsPromise = null;
+  if (!(res instanceof Response) || res.bodyUsed) res = await fetch(url);
   if (!res.ok) throw new Error("Richiesta eventi fallita (" + res.status + ")");
   return res.json();
 }
