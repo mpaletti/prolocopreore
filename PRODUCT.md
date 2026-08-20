@@ -10,9 +10,11 @@ Abitanti di Preore e Tre Ville, giudicariesi delle valli vicine, turisti e famig
 
 ## Product Purpose
 
-Sito ufficiale dell'Associazione Pro Loco di Preore APS (prolocopreore.it, GitHub Pages, HTML statico). È il biglietto da visita pubblico dell'associazione: mostra la vita degli eventi attraverso la fotografia, elenca gli eventi in programma e passati, e tiene i dati istituzionali sempre raggiungibili. Successo = un visitatore capisce in cinque secondi che questa è una comunità viva, trova gli eventi e i contatti senza cercare.
+Sito ufficiale dell'Associazione Pro Loco di Preore APS (prolocopreore.it, GitHub Pages, HTML statico). È il biglietto da visita pubblico dell'associazione: mostra la vita degli eventi attraverso la fotografia, elenca gli eventi in programma e passati, e tiene i dati istituzionali sempre raggiungibili. Dalla versione multi-pagina (2026) il sito è anche il luogo dove l'associazione dimostra di essere un ente reale e verificabile: missione dichiarata, ID RUNTS, indirizzo fisico e statuto integrale sono raggiungibili in un clic dalla navigazione, non solo citati in fondo alla home. Successo = un visitatore capisce in cinque secondi che questa è una comunità viva, trova gli eventi e i contatti senza cercare, e chi verifica l'associazione (piattaforme di donazione, enti, fornitori) trova i dati istituzionali senza doverli chiedere.
 
-Gli eventi sono gestiti dai volontari dell'associazione tramite `/management`, una pagina non linkata dalla home e protetta da login (email + password, Supabase Auth). Ogni evento può avere più foto (galleria) e una descrizione lunga: in home la card mostra copertina, data e anteprima, e il clic apre un dettaglio con la galleria completa e il testo integrale. I dati (eventi + foto) vivono su Supabase, l'unica dipendenza esterna del sito: piano gratuito, nessun costo oltre al dominio.
+Struttura: home (carosello + prossimi eventi), `/chi-siamo/` (missione, attività, organizzazione), `/eventi/` (calendario completo, prossimi e passati), `/contatti/` (sede, telefono, email, PEC, social), `/trasparenza/` (dati dell'ente, organi sociali, rendiconti) e `/statuto/` (i 24 articoli trascritti, con il PDF originale depositato nel RUNTS). Header e footer sono identici su tutte le pagine pubbliche; la navigazione (Chi siamo · Eventi · Contatti · Trasparenza) è testo nell'header su desktop e un pannello a tutto schermo sotto i 760px.
+
+Gli eventi sono gestiti dai volontari dell'associazione tramite `/management`, una pagina non linkata dalla nav e protetta da login (email + password, Supabase Auth). Ogni evento può avere più foto (galleria) e una descrizione lunga: la card mostra copertina, data e anteprima, e il clic apre un dettaglio con la galleria completa e il testo integrale. I dati (eventi + foto) vivono su Supabase, l'unica dipendenza esterna del sito: piano gratuito, nessun costo oltre al dominio.
 
 ## Brand Personality
 
@@ -28,7 +30,7 @@ Notturno, autentico, artigianale. La voce del sito è sobria ed elegante: le fot
 
 1. **La fotografia è il design.** Le immagini a tutto schermo raccontano; l'interfaccia si limita a incorniciarle.
 2. **Chrome d'inchiostro.** Header e footer scuri e quieti, come la china del logo: mai in competizione con le foto.
-3. **I dati si trovano, non si cercano.** Informazioni fiscali e contatti sempre in fondo alla pagina, leggibili e copiabili.
+3. **I dati si trovano, non si cercano.** Informazioni fiscali e contatti sempre in fondo alla pagina (footer condiviso) e su pagine dedicate (Contatti, Trasparenza, Statuto), leggibili e copiabili.
 4. **Fatto a mano, non fatto in serie.** Dettagli con carattere (tipografia con personalità, didascalie con voce) al posto di pattern da template.
 5. **Leggero come una pagina statica.** Niente framework, niente build: HTML/CSS/JS che GitHub Pages serve così com'è; l'unica chiamata di rete in più è verso Supabase per leggere gli eventi.
 

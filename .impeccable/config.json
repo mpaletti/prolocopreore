@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-08-20T07:29:51.841Z",
+        "reason": "modal img is a JS-filled template node (src set on openModal), identical pattern to pre-refactor index.html"
+      }
+    ]
+  }
+}

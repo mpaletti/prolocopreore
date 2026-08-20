@@ -1,5 +1,5 @@
 {
-  "files": ["index.html", "privacy.html"],
+  "files": ["index.html", "privacy.html", "404.html", "chi-siamo/index.html", "eventi/index.html", "contatti/index.html", "trasparenza/index.html", "statuto/index.html"],
   "insertBefore": "</body>",
   "commentSyntax": "html",
   "cspChecked": true
