@@ -5,6 +5,26 @@
 import { isConfigured, fetchEvents, fmtDate, fmtDateShort, fmtTime, todayISO, getPhotos } from './supabase.js';
 import { sanitizeRichText, isRichText, richTextToPreview } from './richtext.js';
 
+// Stringhe dell'interfaccia, scelte da <html lang> come il locale delle date in
+// supabase.js. Solo il contorno è tradotto: titolo, sottotitolo e descrizione
+// degli eventi restano come li scrivono i volontari nel gestionale (il database
+// non ha colonne per lingua) — di norma sono nomi propri (POZFEST, Sagra di
+// Santa Maria Maddalena) che non andrebbero tradotti comunque.
+var IS_EN = String(document.documentElement.lang || 'it').toLowerCase().indexOf('en') === 0;
+var T = IS_EN ? {
+  more: 'Details →',
+  openEvent: 'Open event details: ',
+  showPhoto: 'Show photo ',
+  notConfigured: 'The events section is being set up — check back soon.',
+  loadError: 'We could not load the events right now — please try again later.'
+} : {
+  more: 'Dettagli →',
+  openEvent: 'Apri i dettagli dell\'evento: ',
+  showPhoto: 'Mostra foto ',
+  notConfigured: 'Sezione eventi in allestimento — torna a trovarci a breve.',
+  loadError: 'Non è stato possibile caricare gli eventi al momento — riprova più tardi.'
+};
+
 export function initEvents(opts) {
   var showPast = !!(opts && opts.showPast);
 
@@ -54,11 +74,11 @@ export function initEvents(opts) {
     var metaHtml = meta ? '<p class="event-meta">' + escapeHtml(meta) + '</p>' : '';
     var descText = isRichText(ev.description) ? richTextToPreview(ev.description) : ev.description;
     var descHtml = (!compact && descText) ? '<p class="event-desc">' + escapeHtml(descText) + '</p>' : '';
-    var moreHtml = compact ? '' : '<span class="event-more" aria-hidden="true">Dettagli →</span>';
+    var moreHtml = compact ? '' : '<span class="event-more" aria-hidden="true">' + T.more + '</span>';
 
     return '<li><div class="event-card' + (compact ? ' event-card--compact' : '') + '"' +
       ' data-id="' + escapeHtml(ev.id) + '" role="button" tabindex="0"' +
-      ' aria-label="Apri i dettagli dell\'evento: ' + escapeHtml(ev.title) + '">' + photoHtml +
+      ' aria-label="' + T.openEvent + escapeHtml(ev.title) + '">' + photoHtml +
       '<div class="event-body"><h4>' + escapeHtml(ev.title) + '</h4>' + subtitleHtml + metaHtml + descHtml + moreHtml + '</div></div></li>';
   }
 
@@ -101,7 +121,7 @@ export function initEvents(opts) {
     if (galleryPhotos.length > 1) {
       modalThumbs.innerHTML = galleryPhotos.map(function (p, idx) {
         return '<button type="button" class="event-modal-thumb" data-idx="' + idx +
-          '" aria-label="Mostra foto ' + (idx + 1) + '"><img src="' + escapeHtml(p.thumb_url || p.url) + '" alt=""></button>';
+          '" aria-label="' + T.showPhoto + (idx + 1) + '"><img src="' + escapeHtml(p.thumb_url || p.url) + '" alt=""></button>';
       }).join('');
       modalThumbs.hidden = false;
     } else {
@@ -202,7 +222,7 @@ export function initEvents(opts) {
 
   async function loadEvents() {
     if (!isConfigured) {
-      status.textContent = 'Sezione eventi in allestimento — torna a trovarci a breve.';
+      status.textContent = T.notConfigured;
       return;
     }
 
@@ -235,7 +255,7 @@ export function initEvents(opts) {
     } catch (err) {
       console.error('Errore nel caricamento degli eventi', err);
       status.hidden = false;
-      status.textContent = 'Non è stato possibile caricare gli eventi al momento — riprova più tardi.';
+      status.textContent = T.loadError;
     }
   }
 

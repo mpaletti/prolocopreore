@@ -64,6 +64,15 @@
       text-decoration: none;
       background: oklch(75% 0.115 235 / 0.85);
     }
+
+    /* GitHub Pages serve una sola /404.html per tutto il dominio: la pagina
+       resta in italiano e rimanda in inglese chi arriva da /en/. */
+    .alt-lang {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
@@ -73,15 +82,22 @@
       <img src="/assets/logo-small.png" width="256" height="256" alt="">
       <span>Pro Loco Preore</span>
     </a>
-    <nav class="site-nav" aria-label="Principale">
-      <a class="nav-link" href="/chi-siamo/">Chi siamo</a>
-      <a class="nav-link" href="/eventi/">Eventi</a>
-      <a class="nav-link" href="/contatti/">Contatti</a>
-      <a class="nav-link" href="/trasparenza/">Trasparenza</a>
-    </nav>
-    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label="Apri il menu">
-      <span></span><span></span>
-    </button>
+    <div class="header-right">
+      <nav class="site-nav" aria-label="Principale">
+        <a class="nav-link" href="/chi-siamo/">Chi siamo</a>
+        <a class="nav-link" href="/eventi/">Eventi</a>
+        <a class="nav-link" href="/contatti/">Contatti</a>
+        <a class="nav-link" href="/trasparenza/">Trasparenza</a>
+      </nav>
+      <nav class="lang-switch" aria-label="Lingua">
+        <span aria-current="true">IT</span>
+        <span class="lang-sep" aria-hidden="true">/</span>
+        <a href="/en/" hreflang="en" lang="en" title="English">EN</a>
+      </nav>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label="Apri il menu">
+        <span></span><span></span>
+      </button>
+    </div>
   </header>
 
   <div class="nav-panel" id="nav-panel" role="dialog" aria-modal="true" aria-label="Menu di navigazione" hidden>
@@ -92,6 +108,10 @@
       <a href="/contatti/">Contatti</a>
       <a href="/trasparenza/">Trasparenza</a>
     </nav>
+    <div class="nav-panel-lang">
+      <span aria-current="true">Italiano</span>
+      <a href="/en/" hreflang="en" lang="en">English</a>
+    </div>
     <div class="nav-panel-contact">
       <a href="mailto:info@prolocopreore.it">info@prolocopreore.it</a>
       <a href="tel:+393514611940">351 461 1940</a>
@@ -107,6 +127,7 @@
     <h1>Questa pagina non esiste</h1>
     <p>Il link seguito potrebbe essere scaduto o digitato male. Trovi gli eventi in programma e tutte le informazioni sull'associazione nella pagina principale.</p>
     <a class="btn-home" href="/">Torna alla home</a>
+    <p class="alt-lang" lang="en">This page doesn't exist &mdash; the link may be outdated or mistyped. <a href="/en/">Go to the English home page</a>.</p>
   </main>
 
   <script src="/assets/nav.js"></script>

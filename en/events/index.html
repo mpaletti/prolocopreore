@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The Pro Loco di Preore events calendar: Sagra di Santa Maria Maddalena, POZFEST and POZ Party at Parco al Poz — upcoming events and past events.">
+  <meta name="theme-color" content="#171a20">
+  <link rel="canonical" href="https://prolocopreore.it/en/events/">
+  <link rel="alternate" hreflang="it" href="https://prolocopreore.it/eventi/">
+  <link rel="alternate" hreflang="en" href="https://prolocopreore.it/en/events/">
+  <link rel="alternate" hreflang="x-default" href="https://prolocopreore.it/eventi/">
+  <meta property="og:title" content="Events — Pro Loco di Preore APS">
+  <meta property="og:description" content="The Pro Loco di Preore events calendar: Sagra di Santa Maria Maddalena, POZFEST and POZ Party at Parco al Poz — upcoming events and past events.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://prolocopreore.it/en/events/">
+  <meta property="og:site_name" content="Pro Loco Preore">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:locale:alternate" content="it_IT">
+  <meta property="og:image" content="https://prolocopreore.it/assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="/assets/events.css">
+  <link rel="preconnect" href="https://tnxkxgaczwkkkrdiusdz.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://tnxkxgaczwkkkrdiusdz.supabase.co">
+  <link rel="modulepreload" href="/assets/events.js">
+  <link rel="modulepreload" href="/assets/supabase.js">
+  <link rel="modulepreload" href="/assets/richtext.js">
+  <link rel="preload" href="/assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <title>Events — Pro Loco di Preore APS</title>
+  <script>document.documentElement.classList.remove('no-js');</script>
+  <script>
+    // Same rationale as the Italian pages: start the events SELECT before the
+    // parser reaches the module that consumes it. Keep the URL and key in sync
+    // with assets/supabase.js.
+    window.__eventsPromise = fetch(
+      "https://tnxkxgaczwkkkrdiusdz.supabase.co/rest/v1/events?select=*&order=event_date.asc&apikey=sb_publishable_zWkm_KntqYVSMOHoS73KHA_n7_283Vm"
+    ).catch(function (err) { return err; });
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": "https://prolocopreore.it/en/events/#webpage",
+    "url": "https://prolocopreore.it/en/events/",
+    "name": "Events — Pro Loco di Preore APS",
+    "description": "The Pro Loco di Preore events calendar: upcoming and past events.",
+    "inLanguage": "en",
+    "isPartOf": { "@id": "https://prolocopreore.it/#website" },
+    "about": { "@id": "https://prolocopreore.it/#organization" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://prolocopreore.it/en/" },
+      { "@type": "ListItem", "position": 2, "name": "Events", "item": "https://prolocopreore.it/en/events/" }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to the main content</a>
+
+  <header class="site-header">
+    <a class="brand" href="/en/" aria-label="Pro Loco di Preore — home page">
+      <img src="/assets/logo-small.png" width="256" height="256" alt="">
+      <span>Pro Loco Preore</span>
+    </a>
+    <div class="header-right">
+      <nav class="site-nav" aria-label="Main">
+        <a class="nav-link" href="/en/about/">About us</a>
+        <a class="nav-link" href="/en/events/" aria-current="page">Events</a>
+        <a class="nav-link" href="/en/contact/">Contact</a>
+        <a class="nav-link" href="/en/transparency/">Transparency</a>
+      </nav>
+      <nav class="lang-switch" aria-label="Language">
+        <a href="/eventi/" hreflang="it" lang="it" title="Italiano">IT</a>
+        <span class="lang-sep" aria-hidden="true">/</span>
+        <span aria-current="true">EN</span>
+      </nav>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label="Open the menu">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="nav-panel" id="nav-panel" role="dialog" aria-modal="true" aria-label="Navigation menu" hidden>
+    <button class="nav-panel-close" type="button" data-nav-close aria-label="Close the menu">✕</button>
+    <nav class="nav-panel-links" aria-label="Main">
+      <a href="/en/about/">About us</a>
+      <a href="/en/events/" aria-current="page">Events</a>
+      <a href="/en/contact/">Contact</a>
+      <a href="/en/transparency/">Transparency</a>
+    </nav>
+    <div class="nav-panel-lang">
+      <a href="/eventi/" hreflang="it" lang="it">Italiano</a>
+      <span aria-current="true">English</span>
+    </div>
+    <div class="nav-panel-contact">
+      <a href="mailto:info@prolocopreore.it">info@prolocopreore.it</a>
+      <a href="tel:+393514611940">+39 351 461 1940</a>
+      <div class="nav-panel-social">
+        <a href="https://www.instagram.com/prolocopreore" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.facebook.com/p/Pro-Loco-Preore-100057452411012/" target="_blank" rel="noopener">Facebook</a>
+      </div>
+    </div>
+  </div>
+
+  <main id="main">
+    <div class="page-hero">
+      <img src="/assets/pozfest-12-palco.webp" srcset="/assets/pozfest-12-palco-1280.webp 1280w, /assets/pozfest-12-palco.webp 2048w" sizes="100vw" width="2048" height="1365" alt="Parco al Poz in the evening, with lit marquees and strings of lights during a Pro Loco festival" fetchpriority="high" decoding="async">
+      <div class="page-hero-scrim" aria-hidden="true"></div>
+      <div class="page-hero-content">
+        <h1>Activities and events</h1>
+      </div>
+    </div>
+    <section class="events" id="events-list" aria-labelledby="events-title">
+      <p class="events-status">Loading events…</p>
+
+      <div class="events-group" data-group="prossimi">
+        <h3 class="events-subhead" id="events-title">Upcoming events</h3>
+        <p class="events-empty" hidden>No events are scheduled at the moment — follow us on <a href="https://www.instagram.com/prolocopreore" target="_blank" rel="noopener">Instagram</a> and <a href="https://www.facebook.com/p/Pro-Loco-Preore-100057452411012/" target="_blank" rel="noopener">Facebook</a> for updates.</p>
+        <ul class="events-grid" aria-live="polite"></ul>
+      </div>
+
+      <div class="events-group events-group--archive" data-group="passati" hidden>
+        <h3 class="events-subhead">Past events</h3>
+        <ul class="events-grid events-grid--archive"></ul>
+      </div>
+
+      <noscript>
+        <p class="events-noscript">JavaScript is required to see the upcoming events. In the meantime, follow us on <a href="https://www.instagram.com/prolocopreore" target="_blank" rel="noopener">Instagram</a> and <a href="https://www.facebook.com/p/Pro-Loco-Preore-100057452411012/" target="_blank" rel="noopener">Facebook</a>.</p>
+      </noscript>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-head">
+      <img src="/assets/logo-small.png" width="256" height="256" alt="">
+      <div>
+        <p class="name">Associazione Pro Loco di Preore APS</p>
+        <p class="sub">Social promotion association · Preore, Tre Ville (TN), Italy</p>
+      </div>
+    </div>
+
+    <div class="footer-grid">
+      <section aria-labelledby="f-office">
+        <h2 id="f-office">Registered office</h2>
+        <address>
+          Via Filippo Serafini, 92<br>
+          38095 Tre Ville, fraz. Preore (TN)<br>
+          Italy
+          <span class="muted">Legal name: Associazione Pro Loco di Preore APS</span>
+          <span class="muted">Entered in the Italian Single National Register of Third Sector Entities (RUNTS), entry no. 110067</span>
+        </address>
+      </section>
+
+      <section aria-labelledby="f-contact">
+        <h2 id="f-contact">Contact</h2>
+        <dl>
+          <dt>Phone</dt>
+          <dd><a href="tel:+393514611940">+39 351 461 1940</a></dd>
+          <dt>Certified email (PEC)</dt>
+          <dd><a href="mailto:prolocopreore@pec.it">prolocopreore@pec.it</a></dd>
+          <dt>Email</dt>
+          <dd><a href="mailto:info@prolocopreore.it">info@prolocopreore.it</a></dd>
+          <dt>Instagram</dt>
+          <dd><a href="https://www.instagram.com/prolocopreore" target="_blank" rel="noopener">@prolocopreore</a></dd>
+          <dt>Facebook</dt>
+          <dd><a href="https://www.facebook.com/p/Pro-Loco-Preore-100057452411012/" target="_blank" rel="noopener">Pro Loco Preore</a></dd>
+        </dl>
+      </section>
+
+      <section aria-labelledby="f-tax">
+        <h2 id="f-tax">Tax details</h2>
+        <dl>
+          <dt>VAT number</dt>
+          <dd>01657620223</dd>
+          <dt>Tax code / Charity ID</dt>
+          <dd>95001500222</dd>
+        </dl>
+      </section>
+
+      <section aria-labelledby="f-pages">
+        <h2 id="f-pages">Pages</h2>
+        <nav aria-labelledby="f-pages">
+          <ul>
+            <li><a href="/en/about/">About us</a></li>
+            <li><a href="/en/events/">Events</a></li>
+            <li><a href="/en/contact/">Contact</a></li>
+            <li><a href="/en/transparency/">Transparency</a></li>
+            <li><a href="/en/statute/">Statute</a></li>
+          </ul>
+        </nav>
+      </section>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 Associazione Pro Loco di Preore APS · <a href="/en/privacy.html">Privacy</a></p>
+      <p>Photography: Martina Massetti</p>
+    </div>
+  </footer>
+
+  <div class="event-modal" id="event-modal" hidden>
+    <div class="event-modal-backdrop" data-close></div>
+    <div class="event-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="event-modal-close" type="button" aria-label="Close" data-close>✕</button>
+      <div class="event-modal-gallery">
+        <img class="event-modal-img" alt="">
+        <button class="gallery-nav gallery-prev" type="button" aria-label="Previous photo" hidden>‹</button>
+        <button class="gallery-nav gallery-next" type="button" aria-label="Next photo" hidden>›</button>
+        <span class="gallery-counter" aria-hidden="true" hidden></span>
+      </div>
+      <div class="event-modal-thumbs" hidden></div>
+      <div class="event-modal-body">
+        <h3 id="modal-title"></h3>
+        <p class="event-modal-subtitle"></p>
+        <p class="event-modal-meta"></p>
+        <div class="event-modal-desc"></div>
+        <ul class="event-modal-links" hidden></ul>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initEvents } from '/assets/events.js';
+    initEvents({ showPast: true });
+  </script>
+  <script src="/assets/nav.js"></script>
+
+</body>
+</html>

@@ -29,16 +29,26 @@ export async function fetchEvents() {
   return res.json();
 }
 
+// Locale di formattazione delle date, derivato da <html lang>: le pagine sotto
+// /en/ dichiarano lang="en" e ottengono così date in inglese senza passare
+// parametri lungo tutta la catena di chiamate. L'attributo lang è l'unica fonte
+// di verità sulla lingua della pagina (serve comunque per accessibilità e SEO),
+// quindi non può andare fuori sincrono. en-GB e non en-US: giorno prima del
+// mese, come nella versione italiana.
+export const LOCALE = String(document.documentElement.lang || "it").toLowerCase().startsWith("en")
+  ? "en-GB"
+  : "it-IT";
+
 export function fmtDate(dateStr) {
   if (!dateStr) return "";
   const d = new Date(dateStr + "T00:00:00");
-  return new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "long", year: "numeric" }).format(d);
+  return new Intl.DateTimeFormat(LOCALE, { day: "numeric", month: "long", year: "numeric" }).format(d);
 }
 
 export function fmtDateShort(dateStr) {
   if (!dateStr) return "";
   const d = new Date(dateStr + "T00:00:00");
-  const parts = new Intl.DateTimeFormat("it-IT", { weekday: "short", day: "2-digit", month: "short" }).formatToParts(d);
+  const parts = new Intl.DateTimeFormat(LOCALE, { weekday: "short", day: "2-digit", month: "short" }).formatToParts(d);
   const day = parts.find(p => p.type === "day").value;
   const month = parts.find(p => p.type === "month").value.replace(".", "");
   const weekday = parts.find(p => p.type === "weekday").value.replace(".", "");

@@ -6,12 +6,16 @@
   <meta name="description" content="Dati istituzionali dell'Associazione Pro Loco di Preore APS: RUNTS, codice fiscale, partita IVA, statuto, organi sociali e rendiconti.">
   <meta name="theme-color" content="#171a20">
   <link rel="canonical" href="https://prolocopreore.it/trasparenza/">
+  <link rel="alternate" hreflang="it" href="https://prolocopreore.it/trasparenza/">
+  <link rel="alternate" hreflang="en" href="https://prolocopreore.it/en/transparency/">
+  <link rel="alternate" hreflang="x-default" href="https://prolocopreore.it/trasparenza/">
   <meta property="og:title" content="Trasparenza — Pro Loco di Preore APS">
   <meta property="og:description" content="Dati istituzionali, statuto, organi sociali e rendiconti dell'Associazione Pro Loco di Preore APS.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://prolocopreore.it/trasparenza/">
   <meta property="og:site_name" content="Pro Loco Preore">
   <meta property="og:locale" content="it_IT">
+  <meta property="og:locale:alternate" content="en_GB">
   <meta property="og:image" content="https://prolocopreore.it/assets/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -31,6 +35,7 @@
     "url": "https://prolocopreore.it/trasparenza/",
     "name": "Trasparenza — Pro Loco di Preore APS",
     "description": "Dati istituzionali, statuto, organi sociali e rendiconti dell'Associazione Pro Loco di Preore APS.",
+    "inLanguage": "it",
     "isPartOf": { "@id": "https://prolocopreore.it/#website" },
     "about": { "@id": "https://prolocopreore.it/#organization" }
   }
@@ -55,15 +60,22 @@
       <img src="/assets/logo-small.png" width="256" height="256" alt="">
       <span>Pro Loco Preore</span>
     </a>
-    <nav class="site-nav" aria-label="Principale">
-      <a class="nav-link" href="/chi-siamo/">Chi siamo</a>
-      <a class="nav-link" href="/eventi/">Eventi</a>
-      <a class="nav-link" href="/contatti/">Contatti</a>
-      <a class="nav-link" href="/trasparenza/" aria-current="page">Trasparenza</a>
-    </nav>
-    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label="Apri il menu">
-      <span></span><span></span>
-    </button>
+    <div class="header-right">
+      <nav class="site-nav" aria-label="Principale">
+        <a class="nav-link" href="/chi-siamo/">Chi siamo</a>
+        <a class="nav-link" href="/eventi/">Eventi</a>
+        <a class="nav-link" href="/contatti/">Contatti</a>
+        <a class="nav-link" href="/trasparenza/" aria-current="page">Trasparenza</a>
+      </nav>
+      <nav class="lang-switch" aria-label="Lingua">
+        <span aria-current="true">IT</span>
+        <span class="lang-sep" aria-hidden="true">/</span>
+        <a href="/en/transparency/" hreflang="en" lang="en" title="English">EN</a>
+      </nav>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label="Apri il menu">
+        <span></span><span></span>
+      </button>
+    </div>
   </header>
 
   <div class="nav-panel" id="nav-panel" role="dialog" aria-modal="true" aria-label="Menu di navigazione" hidden>
@@ -74,6 +86,10 @@
       <a href="/contatti/">Contatti</a>
       <a href="/trasparenza/" aria-current="page">Trasparenza</a>
     </nav>
+    <div class="nav-panel-lang">
+      <span aria-current="true">Italiano</span>
+      <a href="/en/transparency/" hreflang="en" lang="en">English</a>
+    </div>
     <div class="nav-panel-contact">
       <a href="mailto:info@prolocopreore.it">info@prolocopreore.it</a>
       <a href="tel:+393514611940">351 461 1940</a>

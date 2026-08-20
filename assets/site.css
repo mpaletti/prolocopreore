@@ -4,9 +4,12 @@
    che resta inline in index.html perché non riusata altrove).
    Header e footer sono comunque markup duplicato a mano in ogni pagina
    (nessun sistema di partial, per restare senza build): quando cambi
-   .site-header, .site-nav, .nav-panel o .site-footer qui, aggiorna lo
-   stesso markup in index.html, chi-siamo/, eventi/, contatti/,
-   trasparenza/, statuto/, privacy.html e 404.html.
+   .site-header, .site-nav, .lang-switch, .nav-panel o .site-footer qui,
+   aggiorna lo stesso markup in TUTTE le 15 pagine pubbliche —
+   italiano:  index.html, chi-siamo/, eventi/, contatti/, trasparenza/,
+              statuto/, privacy.html, 404.html
+   inglese:   en/, en/about/, en/events/, en/contact/, en/transparency/,
+              en/statute/, en/privacy.html
    ========================================================================== */
 
 @font-face {
@@ -143,6 +146,15 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   text-shadow: 0 1px 14px oklch(10% 0.01 255 / 0.6);
 }
 
+/* Gruppo di destra: nav + selettore di lingua + toggle mobile.
+   Il gap è deliberatamente più ampio di quello fra le voci di .site-nav:
+   è lo spazio, non un filo verticale, a separare la lingua dalla nav. */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 2.75rem);
+}
+
 /* ---------- Navigazione ---------- */
 
 .site-nav {
@@ -173,6 +185,44 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .site-header--home .nav-link {
   text-shadow: 0 1px 14px oklch(10% 0.01 255 / 0.6);
 }
+
+/* ---------- Selettore di lingua ---------- */
+/* Sempre visibile, a ogni larghezza: chi arriva da fuori deve poter cambiare
+   lingua senza prima aprire il menu. La lingua corrente è uno <span> (non un
+   link a sé stessa) in --text peso 700; l'altra è un link in --text-dim, senza
+   sottolineatura: stesso trattamento di .nav-link, che nell'header sta accanto
+   — lo stacco lo fanno colore e peso, e il colore cambia al hover. */
+
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+/* 44px di area di tocco: la riga dell'header è già alta almeno tanto
+   (logo 48-62px), quindi non allunga la barra. */
+.lang-switch > * {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.lang-switch [aria-current="true"] { color: var(--text); font-weight: 700; }
+.lang-switch .lang-sep { color: var(--line); font-weight: 400; }
+.lang-switch a { color: var(--text-dim); }
+/* text-decoration: none esplicito: altrimenti vince la regola globale a:hover */
+.lang-switch a:hover { color: var(--text); text-decoration: none; }
+
+.site-header--home .lang-switch [aria-current="true"],
+.site-header--home .lang-switch a {
+  text-shadow: 0 1px 14px oklch(10% 0.01 255 / 0.6);
+}
+/* Sopra la fotografia il grigio attenuato non regge: si alza la luminosità
+   mantenendo comunque lo stacco con la lingua corrente (96%). */
+.site-header--home .lang-switch a { color: oklch(90% 0.008 250); }
+.site-header--home .lang-switch a:hover { color: var(--text); }
+.site-header--home .lang-switch .lang-sep { color: oklch(100% 0 0 / 0.45); }
 
 .nav-toggle {
   display: none;
@@ -210,6 +260,10 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   justify-content: center;
   gap: clamp(2rem, 6vh, 3.5rem);
   padding: clamp(1.5rem, 6vw, 3rem);
+  /* Con voci + lingua + contatti il contenuto può superare l'altezza su
+     viewport molto bassi (telefono in orizzontale): meglio scrollabile
+     che tagliato. */
+  overflow-y: auto;
   background: oklch(14% 0.012 255 / 0.98);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -254,6 +308,23 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Nel pannello c'è spazio per i nomi per esteso, ognuno scritto nella propria
+   lingua (è la convenzione corretta per un selettore di lingua). */
+.nav-panel-lang {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.nav-panel-lang [aria-current="true"] { color: var(--accent); }
+.nav-panel-lang a {
+  color: var(--text-dim);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.nav-panel-lang a:hover { color: var(--text); }
 
 .nav-panel-contact {
   padding-top: clamp(1.5rem, 4vh, 2.5rem);
