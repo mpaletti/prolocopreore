@@ -71,3 +71,32 @@ create policy "event photos delete" on storage.objects
 -- nullable). Esegui una tantum nel SQL Editor; è idempotente.
 -- ---------------------------------------------------------------------------
 -- alter table public.events add column if not exists subtitle text;
+
+-- ---------------------------------------------------------------------------
+-- KEEP-ALIVE: evita la pausa automatica del progetto (piano free, 7 giorni).
+-- Il workflow .github/workflows/keepalive.yml chiama la funzione keepalive()
+-- che fa una SCRITTURA reale (upsert di un timestamp): una semplice SELECT
+-- non è stata considerata "attività sufficiente" da Supabase.
+-- Esegui una tantum nel SQL Editor; è idempotente.
+-- ---------------------------------------------------------------------------
+create table if not exists public.keepalive (
+  id        int primary key default 1 check (id = 1),
+  last_ping timestamptz not null default now()
+);
+
+-- RLS attiva e nessuna policy: la tabella non è leggibile/scrivibile via API,
+-- solo la funzione (security definer) può toccarla.
+alter table public.keepalive enable row level security;
+
+create or replace function public.keepalive()
+returns void
+language sql
+security definer
+set search_path = ''
+as $$
+  insert into public.keepalive (id, last_ping) values (1, now())
+  on conflict (id) do update set last_ping = now();
+$$;
+
+revoke all on function public.keepalive() from public;
+grant execute on function public.keepalive() to anon;

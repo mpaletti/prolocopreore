@@ -5,15 +5,38 @@ on:
     - cron: '0 6 */3 * *'
   workflow_dispatch:
 
+permissions:
+  actions: write   # serve allo step "Evita la disattivazione dopo 60 giorni"
+
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Supabase per evitare la pausa da inattività (7 giorni)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          # Chiave anon: è pubblica (la stessa di assets/supabase.js), non serve la service role.
+          SUPABASE_ANON_KEY: sb_publishable_zWkm_KntqYVSMOHoS73KHA_n7_283Vm
         run: |
-          code=$(curl -sS -o /dev/null -w "%{http_code}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/events?select=id&limit=1" \
-            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}")
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "::error::Secret SUPABASE_URL mancante o vuoto"; exit 1
+          fi
+          # Scrittura reale (RPC keepalive(), vedi supabase/schema.sql): una SELECT non basta.
+          code=$(curl -sS -o /tmp/resp -w "%{http_code}" -X POST \
+            "$SUPABASE_URL/rest/v1/rpc/keepalive" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{}') || { echo "::error::Host Supabase non raggiungibile (progetto in pausa o eliminato?)"; exit 1; }
           echo "HTTP $code"
-          if [ "$code" -ge 300 ]; then exit 1; fi
+          if [ "$code" -ge 300 ]; then
+            echo "::error::Supabase ha risposto $code: $(cat /tmp/resp)"; exit 1
+          fi
+
+      # GitHub disattiva i workflow schedulati dopo 60 giorni senza attività nel repo.
+      # Disabilitare e riabilitare il workflow azzera il contatore.
+      - name: Evita la disattivazione dopo 60 giorni
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow disable keepalive.yml --repo "$GITHUB_REPOSITORY"
+          gh workflow enable keepalive.yml --repo "$GITHUB_REPOSITORY"
